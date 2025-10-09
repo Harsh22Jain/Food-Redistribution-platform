@@ -15,6 +15,7 @@ interface Match {
   delivery_time: string | null;
   notes: string | null;
   donation: {
+    id: string;
     title: string;
     quantity: number;
     unit: string;
@@ -106,7 +107,7 @@ export default function Matches() {
         matchesData.map(async (match) => {
           const { data: donation } = await supabase
             .from("food_donations")
-            .select("title, quantity, unit, pickup_location, pickup_time_start, pickup_time_end, donor_id")
+            .select("id, title, quantity, unit, pickup_location, pickup_time_start, pickup_time_end, donor_id")
             .eq("id", match.donation_id)
             .single();
 
@@ -198,6 +199,36 @@ export default function Matches() {
       toast({
         title: "Success",
         description: "You're now assigned to this delivery",
+      });
+
+      fetchMatches();
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
+  };
+
+  const reorderMatch = async (match: Match) => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { error } = await supabase
+        .from("donation_matches")
+        .insert({
+          donation_id: match.donation.id,
+          recipient_id: user.id,
+          status: "pending"
+        });
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "New match created successfully",
       });
 
       fetchMatches();
@@ -375,6 +406,12 @@ export default function Matches() {
                         onClick={() => updateMatchStatus(match.id, "cancelled")}
                       >
                         Cancel Match
+                      </Button>
+                    )}
+
+                    {userRole === "recipient" && match.status === "cancelled" && (
+                      <Button onClick={() => reorderMatch(match)}>
+                        Reorder
                       </Button>
                     )}
                   </div>

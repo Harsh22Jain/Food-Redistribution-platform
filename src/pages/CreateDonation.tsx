@@ -14,7 +14,23 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Upload, ArrowLeft } from "lucide-react";
+import { 
+  Upload, 
+  ArrowLeft, 
+  Apple, 
+  UtensilsCrossed, 
+  Package, 
+  Cake, 
+  Milk, 
+  Snowflake, 
+  Coffee,
+  Wheat,
+  Candy,
+  Wine,
+  Droplet,
+  Baby,
+  MoreHorizontal
+} from "lucide-react";
 
 export default function CreateDonation() {
   const navigate = useNavigate();
@@ -150,19 +166,84 @@ export default function CreateDonation() {
                     <SelectValue placeholder="Select food type" />
                   </SelectTrigger>
                   <SelectContent className="bg-background z-50">
-                    <SelectItem value="produce">Produce (Fruits & Vegetables)</SelectItem>
-                    <SelectItem value="prepared">Prepared Vegetarian Food</SelectItem>
-                    <SelectItem value="packaged">Packaged Goods</SelectItem>
-                    <SelectItem value="bakery">Bakery & Bread</SelectItem>
-                    <SelectItem value="dairy">Dairy & Eggs</SelectItem>
-                    <SelectItem value="frozen">Frozen Vegetarian Foods</SelectItem>
-                    <SelectItem value="canned">Canned Goods</SelectItem>
-                    <SelectItem value="grains">Grains & Pasta</SelectItem>
-                    <SelectItem value="snacks">Snacks & Desserts</SelectItem>
-                    <SelectItem value="beverages">Beverages</SelectItem>
-                    <SelectItem value="condiments">Condiments & Sauces</SelectItem>
-                    <SelectItem value="baby">Baby Food</SelectItem>
-                    <SelectItem value="other">Other</SelectItem>
+                    <SelectItem value="produce">
+                      <div className="flex items-center justify-between w-full">
+                        <span>Produce (Fruits & Vegetables)</span>
+                        <Apple className="h-4 w-4 ml-2 text-muted-foreground" />
+                      </div>
+                    </SelectItem>
+                    <SelectItem value="prepared">
+                      <div className="flex items-center justify-between w-full">
+                        <span>Prepared Vegetarian Food</span>
+                        <UtensilsCrossed className="h-4 w-4 ml-2 text-muted-foreground" />
+                      </div>
+                    </SelectItem>
+                    <SelectItem value="packaged">
+                      <div className="flex items-center justify-between w-full">
+                        <span>Packaged Goods</span>
+                        <Package className="h-4 w-4 ml-2 text-muted-foreground" />
+                      </div>
+                    </SelectItem>
+                    <SelectItem value="bakery">
+                      <div className="flex items-center justify-between w-full">
+                        <span>Bakery & Bread</span>
+                        <Cake className="h-4 w-4 ml-2 text-muted-foreground" />
+                      </div>
+                    </SelectItem>
+                    <SelectItem value="dairy">
+                      <div className="flex items-center justify-between w-full">
+                        <span>Dairy & Eggs</span>
+                        <Milk className="h-4 w-4 ml-2 text-muted-foreground" />
+                      </div>
+                    </SelectItem>
+                    <SelectItem value="frozen">
+                      <div className="flex items-center justify-between w-full">
+                        <span>Frozen Vegetarian Foods</span>
+                        <Snowflake className="h-4 w-4 ml-2 text-muted-foreground" />
+                      </div>
+                    </SelectItem>
+                    <SelectItem value="canned">
+                      <div className="flex items-center justify-between w-full">
+                        <span>Canned Goods</span>
+                        <Coffee className="h-4 w-4 ml-2 text-muted-foreground" />
+                      </div>
+                    </SelectItem>
+                    <SelectItem value="grains">
+                      <div className="flex items-center justify-between w-full">
+                        <span>Grains & Pasta</span>
+                        <Wheat className="h-4 w-4 ml-2 text-muted-foreground" />
+                      </div>
+                    </SelectItem>
+                    <SelectItem value="snacks">
+                      <div className="flex items-center justify-between w-full">
+                        <span>Snacks & Desserts</span>
+                        <Candy className="h-4 w-4 ml-2 text-muted-foreground" />
+                      </div>
+                    </SelectItem>
+                    <SelectItem value="beverages">
+                      <div className="flex items-center justify-between w-full">
+                        <span>Beverages</span>
+                        <Wine className="h-4 w-4 ml-2 text-muted-foreground" />
+                      </div>
+                    </SelectItem>
+                    <SelectItem value="condiments">
+                      <div className="flex items-center justify-between w-full">
+                        <span>Condiments & Sauces</span>
+                        <Droplet className="h-4 w-4 ml-2 text-muted-foreground" />
+                      </div>
+                    </SelectItem>
+                    <SelectItem value="baby">
+                      <div className="flex items-center justify-between w-full">
+                        <span>Baby Food</span>
+                        <Baby className="h-4 w-4 ml-2 text-muted-foreground" />
+                      </div>
+                    </SelectItem>
+                    <SelectItem value="other">
+                      <div className="flex items-center justify-between w-full">
+                        <span>Other</span>
+                        <MoreHorizontal className="h-4 w-4 ml-2 text-muted-foreground" />
+                      </div>
+                    </SelectItem>
                   </SelectContent>
                 </Select>
               </div>

@@ -151,12 +151,11 @@ export default function CreateDonation() {
                   </SelectTrigger>
                   <SelectContent className="bg-background z-50">
                     <SelectItem value="produce">Produce (Fruits & Vegetables)</SelectItem>
-                    <SelectItem value="prepared">Prepared Food</SelectItem>
+                    <SelectItem value="prepared">Prepared Vegetarian Food</SelectItem>
                     <SelectItem value="packaged">Packaged Goods</SelectItem>
                     <SelectItem value="bakery">Bakery & Bread</SelectItem>
                     <SelectItem value="dairy">Dairy & Eggs</SelectItem>
-                    <SelectItem value="meat">Meat & Seafood</SelectItem>
-                    <SelectItem value="frozen">Frozen Foods</SelectItem>
+                    <SelectItem value="frozen">Frozen Vegetarian Foods</SelectItem>
                     <SelectItem value="canned">Canned Goods</SelectItem>
                     <SelectItem value="grains">Grains & Pasta</SelectItem>
                     <SelectItem value="snacks">Snacks & Desserts</SelectItem>

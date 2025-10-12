@@ -149,13 +149,20 @@ export default function CreateDonation() {
                   <SelectTrigger>
                     <SelectValue placeholder="Select food type" />
                   </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="produce">Produce</SelectItem>
+                  <SelectContent className="bg-background z-50">
+                    <SelectItem value="produce">Produce (Fruits & Vegetables)</SelectItem>
                     <SelectItem value="prepared">Prepared Food</SelectItem>
                     <SelectItem value="packaged">Packaged Goods</SelectItem>
-                    <SelectItem value="bakery">Bakery</SelectItem>
-                    <SelectItem value="dairy">Dairy</SelectItem>
-                    <SelectItem value="meat">Meat</SelectItem>
+                    <SelectItem value="bakery">Bakery & Bread</SelectItem>
+                    <SelectItem value="dairy">Dairy & Eggs</SelectItem>
+                    <SelectItem value="meat">Meat & Seafood</SelectItem>
+                    <SelectItem value="frozen">Frozen Foods</SelectItem>
+                    <SelectItem value="canned">Canned Goods</SelectItem>
+                    <SelectItem value="grains">Grains & Pasta</SelectItem>
+                    <SelectItem value="snacks">Snacks & Desserts</SelectItem>
+                    <SelectItem value="beverages">Beverages</SelectItem>
+                    <SelectItem value="condiments">Condiments & Sauces</SelectItem>
+                    <SelectItem value="baby">Baby Food</SelectItem>
                     <SelectItem value="other">Other</SelectItem>
                   </SelectContent>
                 </Select>
@@ -186,11 +193,16 @@ export default function CreateDonation() {
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="bg-background z-50">
                       <SelectItem value="kg">Kilograms</SelectItem>
                       <SelectItem value="lbs">Pounds</SelectItem>
                       <SelectItem value="servings">Servings</SelectItem>
                       <SelectItem value="items">Items</SelectItem>
+                      <SelectItem value="boxes">Boxes</SelectItem>
+                      <SelectItem value="bags">Bags</SelectItem>
+                      <SelectItem value="liters">Liters</SelectItem>
+                      <SelectItem value="gallons">Gallons</SelectItem>
+                      <SelectItem value="portions">Portions</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>

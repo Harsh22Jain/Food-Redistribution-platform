@@ -177,105 +177,139 @@ export default function CreateDonation() {
                   </SelectTrigger>
                   <SelectContent className="bg-background z-50">
                     <SelectItem value="rice">
-                      <div className="flex items-center justify-between w-full">
-                        <span>Rice & Rice Products</span>
-                        <Wheat className="h-4 w-4 ml-2 text-amber-500" />
+                      <div className="flex items-center gap-3 w-full">
+                        <div className="w-10 h-10 rounded-lg bg-amber-100 dark:bg-amber-900/20 flex items-center justify-center flex-shrink-0">
+                          <Wheat className="h-5 w-5 text-amber-600 dark:text-amber-500" />
+                        </div>
+                        <span className="flex-1">Rice & Rice Products</span>
                       </div>
                     </SelectItem>
                     <SelectItem value="dals">
-                      <div className="flex items-center justify-between w-full">
-                        <span>Dals & Lentils (Toor, Moong, Chana, Masoor)</span>
-                        <Soup className="h-4 w-4 ml-2 text-orange-500" />
+                      <div className="flex items-center gap-3 w-full">
+                        <div className="w-10 h-10 rounded-lg bg-orange-100 dark:bg-orange-900/20 flex items-center justify-center flex-shrink-0">
+                          <Soup className="h-5 w-5 text-orange-600 dark:text-orange-500" />
+                        </div>
+                        <span className="flex-1">Dals & Lentils (Toor, Moong, Chana, Masoor)</span>
                       </div>
                     </SelectItem>
                     <SelectItem value="vegetables">
-                      <div className="flex items-center justify-between w-full">
-                        <span>Indian Vegetables & Leafy Greens</span>
-                        <Carrot className="h-4 w-4 ml-2 text-green-600" />
+                      <div className="flex items-center gap-3 w-full">
+                        <div className="w-10 h-10 rounded-lg bg-green-100 dark:bg-green-900/20 flex items-center justify-center flex-shrink-0">
+                          <Carrot className="h-5 w-5 text-green-700 dark:text-green-500" />
+                        </div>
+                        <span className="flex-1">Indian Vegetables & Leafy Greens</span>
                       </div>
                     </SelectItem>
                     <SelectItem value="fruits">
-                      <div className="flex items-center justify-between w-full">
-                        <span>Indian Fruits (Mango, Banana, Guava, etc.)</span>
-                        <Apple className="h-4 w-4 ml-2 text-red-500" />
+                      <div className="flex items-center gap-3 w-full">
+                        <div className="w-10 h-10 rounded-lg bg-red-100 dark:bg-red-900/20 flex items-center justify-center flex-shrink-0">
+                          <Apple className="h-5 w-5 text-red-600 dark:text-red-500" />
+                        </div>
+                        <span className="flex-1">Indian Fruits (Mango, Banana, Guava, etc.)</span>
                       </div>
                     </SelectItem>
                     <SelectItem value="breads">
-                      <div className="flex items-center justify-between w-full">
-                        <span>Indian Breads (Roti, Paratha, Naan, Puri)</span>
-                        <Pizza className="h-4 w-4 ml-2 text-amber-600" />
+                      <div className="flex items-center gap-3 w-full">
+                        <div className="w-10 h-10 rounded-lg bg-amber-100 dark:bg-amber-900/20 flex items-center justify-center flex-shrink-0">
+                          <Pizza className="h-5 w-5 text-amber-700 dark:text-amber-600" />
+                        </div>
+                        <span className="flex-1">Indian Breads (Roti, Paratha, Naan, Puri)</span>
                       </div>
                     </SelectItem>
                     <SelectItem value="dairy">
-                      <div className="flex items-center justify-between w-full">
-                        <span>Paneer, Curd, Ghee & Dairy Products</span>
-                        <Milk className="h-4 w-4 ml-2 text-blue-500" />
+                      <div className="flex items-center gap-3 w-full">
+                        <div className="w-10 h-10 rounded-lg bg-blue-100 dark:bg-blue-900/20 flex items-center justify-center flex-shrink-0">
+                          <Milk className="h-5 w-5 text-blue-600 dark:text-blue-500" />
+                        </div>
+                        <span className="flex-1">Paneer, Curd, Ghee & Dairy Products</span>
                       </div>
                     </SelectItem>
                     <SelectItem value="sweets">
-                      <div className="flex items-center justify-between w-full">
-                        <span>Indian Sweets (Ladoo, Barfi, Halwa, Jalebi)</span>
-                        <IceCream className="h-4 w-4 ml-2 text-pink-500" />
+                      <div className="flex items-center gap-3 w-full">
+                        <div className="w-10 h-10 rounded-lg bg-pink-100 dark:bg-pink-900/20 flex items-center justify-center flex-shrink-0">
+                          <IceCream className="h-5 w-5 text-pink-600 dark:text-pink-500" />
+                        </div>
+                        <span className="flex-1">Indian Sweets (Ladoo, Barfi, Halwa, Jalebi)</span>
                       </div>
                     </SelectItem>
                     <SelectItem value="snacks">
-                      <div className="flex items-center justify-between w-full">
-                        <span>Indian Snacks (Samosa, Pakora, Namkeen)</span>
-                        <Cookie className="h-4 w-4 ml-2 text-orange-600" />
+                      <div className="flex items-center gap-3 w-full">
+                        <div className="w-10 h-10 rounded-lg bg-orange-100 dark:bg-orange-900/20 flex items-center justify-center flex-shrink-0">
+                          <Cookie className="h-5 w-5 text-orange-700 dark:text-orange-600" />
+                        </div>
+                        <span className="flex-1">Indian Snacks (Samosa, Pakora, Namkeen)</span>
                       </div>
                     </SelectItem>
                     <SelectItem value="pickles">
-                      <div className="flex items-center justify-between w-full">
-                        <span>Pickles & Chutneys</span>
-                        <Droplet className="h-4 w-4 ml-2 text-green-700" />
+                      <div className="flex items-center gap-3 w-full">
+                        <div className="w-10 h-10 rounded-lg bg-green-100 dark:bg-green-900/20 flex items-center justify-center flex-shrink-0">
+                          <Droplet className="h-5 w-5 text-green-700 dark:text-green-600" />
+                        </div>
+                        <span className="flex-1">Pickles & Chutneys</span>
                       </div>
                     </SelectItem>
                     <SelectItem value="spices">
-                      <div className="flex items-center justify-between w-full">
-                        <span>Spices & Masalas</span>
-                        <Flame className="h-4 w-4 ml-2 text-red-600" />
+                      <div className="flex items-center gap-3 w-full">
+                        <div className="w-10 h-10 rounded-lg bg-red-100 dark:bg-red-900/20 flex items-center justify-center flex-shrink-0">
+                          <Flame className="h-5 w-5 text-red-700 dark:text-red-600" />
+                        </div>
+                        <span className="flex-1">Spices & Masalas</span>
                       </div>
                     </SelectItem>
                     <SelectItem value="prepared">
-                      <div className="flex items-center justify-between w-full">
-                        <span>Prepared Indian Meals (Sabzi, Dal, Curry)</span>
-                        <UtensilsCrossed className="h-4 w-4 ml-2 text-orange-500" />
+                      <div className="flex items-center gap-3 w-full">
+                        <div className="w-10 h-10 rounded-lg bg-orange-100 dark:bg-orange-900/20 flex items-center justify-center flex-shrink-0">
+                          <UtensilsCrossed className="h-5 w-5 text-orange-600 dark:text-orange-500" />
+                        </div>
+                        <span className="flex-1">Prepared Indian Meals (Sabzi, Dal, Curry)</span>
                       </div>
                     </SelectItem>
                     <SelectItem value="beverages">
-                      <div className="flex items-center justify-between w-full">
-                        <span>Indian Beverages (Chai, Lassi, Buttermilk)</span>
-                        <Coffee className="h-4 w-4 ml-2 text-amber-700" />
+                      <div className="flex items-center gap-3 w-full">
+                        <div className="w-10 h-10 rounded-lg bg-amber-100 dark:bg-amber-900/20 flex items-center justify-center flex-shrink-0">
+                          <Coffee className="h-5 w-5 text-amber-700 dark:text-amber-600" />
+                        </div>
+                        <span className="flex-1">Indian Beverages (Chai, Lassi, Buttermilk)</span>
                       </div>
                     </SelectItem>
                     <SelectItem value="packaged">
-                      <div className="flex items-center justify-between w-full">
-                        <span>Packaged Indian Foods</span>
-                        <Package className="h-4 w-4 ml-2 text-slate-600" />
+                      <div className="flex items-center gap-3 w-full">
+                        <div className="w-10 h-10 rounded-lg bg-slate-100 dark:bg-slate-800/40 flex items-center justify-center flex-shrink-0">
+                          <Package className="h-5 w-5 text-slate-700 dark:text-slate-400" />
+                        </div>
+                        <span className="flex-1">Packaged Indian Foods</span>
                       </div>
                     </SelectItem>
                     <SelectItem value="flours">
-                      <div className="flex items-center justify-between w-full">
-                        <span>Flour & Grains (Atta, Besan, Sooji)</span>
-                        <Wheat className="h-4 w-4 ml-2 text-yellow-600" />
+                      <div className="flex items-center gap-3 w-full">
+                        <div className="w-10 h-10 rounded-lg bg-yellow-100 dark:bg-yellow-900/20 flex items-center justify-center flex-shrink-0">
+                          <Wheat className="h-5 w-5 text-yellow-700 dark:text-yellow-600" />
+                        </div>
+                        <span className="flex-1">Flour & Grains (Atta, Besan, Sooji)</span>
                       </div>
                     </SelectItem>
                     <SelectItem value="dryfuits">
-                      <div className="flex items-center justify-between w-full">
-                        <span>Dry Fruits & Nuts (Cashew, Almond, Raisins)</span>
-                        <Nut className="h-4 w-4 ml-2 text-amber-800" />
+                      <div className="flex items-center gap-3 w-full">
+                        <div className="w-10 h-10 rounded-lg bg-amber-100 dark:bg-amber-900/20 flex items-center justify-center flex-shrink-0">
+                          <Nut className="h-5 w-5 text-amber-800 dark:text-amber-700" />
+                        </div>
+                        <span className="flex-1">Dry Fruits & Nuts (Cashew, Almond, Raisins)</span>
                       </div>
                     </SelectItem>
                     <SelectItem value="frozen">
-                      <div className="flex items-center justify-between w-full">
-                        <span>Frozen Vegetarian Foods</span>
-                        <Snowflake className="h-4 w-4 ml-2 text-cyan-500" />
+                      <div className="flex items-center gap-3 w-full">
+                        <div className="w-10 h-10 rounded-lg bg-cyan-100 dark:bg-cyan-900/20 flex items-center justify-center flex-shrink-0">
+                          <Snowflake className="h-5 w-5 text-cyan-600 dark:text-cyan-500" />
+                        </div>
+                        <span className="flex-1">Frozen Vegetarian Foods</span>
                       </div>
                     </SelectItem>
                     <SelectItem value="bakery">
-                      <div className="flex items-center justify-between w-full">
-                        <span>Bakery Items (Bread, Buns, Cakes)</span>
-                        <Cake className="h-4 w-4 ml-2 text-pink-600" />
+                      <div className="flex items-center gap-3 w-full">
+                        <div className="w-10 h-10 rounded-lg bg-pink-100 dark:bg-pink-900/20 flex items-center justify-center flex-shrink-0">
+                          <Cake className="h-5 w-5 text-pink-700 dark:text-pink-600" />
+                        </div>
+                        <span className="flex-1">Bakery Items (Bread, Buns, Cakes)</span>
                       </div>
                     </SelectItem>
                   </SelectContent>

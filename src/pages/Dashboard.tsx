@@ -3,9 +3,10 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { User } from "@supabase/supabase-js";
 import Navbar from "@/components/Navbar";
+import SmartMatchSuggestions from "@/components/SmartMatchSuggestions";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Package, Users, Truck, Bell, TrendingUp } from "lucide-react";
+import { Package, Users, Truck, Bell, TrendingUp, Building2 } from "lucide-react";
 
 interface Stats {
   activeDonations: number;
@@ -185,73 +186,113 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      <div className="container mx-auto px-4 pt-24 pb-12">
+      <div className="container mx-auto px-4 py-8">
         <div className="mb-8">
           <h1 className="text-4xl font-bold mb-2">Dashboard</h1>
           <p className="text-muted-foreground">
-            Welcome back! Here's what's happening with your NourishNet activity.
+            Welcome back! Here's your impact overview.
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {currentRoleCard && (
-            <Card className="hover:shadow-medium transition-shadow cursor-pointer" onClick={currentRoleCard.action}>
+        {userRole === "recipient" && (
+          <div className="mb-8">
+            <SmartMatchSuggestions />
+          </div>
+        )}
+
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-8">
+          {userRole === "donor" && (
+            <Card className="md:col-span-2 lg:col-span-4 bg-gradient-to-r from-primary/10 to-accent/10 border-primary/20">
               <CardHeader>
-                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
-                  <currentRoleCard.icon className="w-6 h-6 text-primary" />
-                </div>
-                <CardTitle>{currentRoleCard.title}</CardTitle>
-                <CardDescription>{currentRoleCard.description}</CardDescription>
+                <CardTitle className="flex items-center gap-2">
+                  <Building2 className="h-5 w-5 text-primary" />
+                  Business Account
+                </CardTitle>
+                <CardDescription>
+                  Manage your business profile and expand your impact
+                </CardDescription>
               </CardHeader>
               <CardContent>
-                <Button className="w-full">Get Started</Button>
+                <Button onClick={() => navigate("/business-onboarding")} variant="default">
+                  Update Business Profile
+                </Button>
               </CardContent>
             </Card>
           )}
-
-          <Card className="hover:shadow-medium transition-shadow cursor-pointer" onClick={() => navigate("/matches")}>
-            <CardHeader>
-              <div className="w-12 h-12 bg-accent/10 rounded-lg flex items-center justify-center mb-4">
-                <Bell className="w-6 h-6 text-accent" />
-              </div>
-              <CardTitle>My Matches</CardTitle>
-              <CardDescription>View and manage your food matches</CardDescription>
+          
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">
+                {userRole === "donor" ? "Active Donations" : "Available Food"}
+              </CardTitle>
+              <Package className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <Button variant="outline" className="w-full">View All</Button>
+              <div className="text-2xl font-bold">{stats.activeDonations}</div>
             </CardContent>
           </Card>
 
-          <Card className="hover:shadow-medium transition-shadow">
-            <CardHeader>
-              <div className="w-12 h-12 bg-success/10 rounded-lg flex items-center justify-center mb-4">
-                <TrendingUp className="w-6 h-6 text-success" />
-              </div>
-              <CardTitle>Live Stats</CardTitle>
-              <CardDescription>Real-time updates</CardDescription>
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Completed Matches</CardTitle>
+              <Users className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
-            <CardContent className="space-y-3">
-              {userRole === "donor" && (
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-muted-foreground">Active Donations</span>
-                  <span className="font-semibold text-lg">{stats.activeDonations}</span>
-                </div>
-              )}
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-muted-foreground">Pending Matches</span>
-                <span className="font-semibold text-lg">{stats.pendingMatches}</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-muted-foreground">Completed</span>
-                <span className="font-semibold text-lg">{stats.completedMatches}</span>
-              </div>
-              <div className="flex justify-between items-center pt-2 border-t">
-                <span className="text-sm font-medium">Total Impact</span>
-                <span className="font-bold text-xl text-primary">{stats.totalImpact}</span>
-              </div>
+            <CardContent>
+              <div className="text-2xl font-bold">{stats.completedMatches}</div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Pending Matches</CardTitle>
+              <Truck className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{stats.pendingMatches}</div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Total Impact</CardTitle>
+              <TrendingUp className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{stats.totalImpact}</div>
+              <p className="text-xs text-muted-foreground">
+                {userRole === "donor" ? "donations" : "matches"}
+              </p>
             </CardContent>
           </Card>
         </div>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Quick Actions</CardTitle>
+            <CardDescription>Navigate to key features</CardDescription>
+          </CardHeader>
+          <CardContent className="grid gap-4 md:grid-cols-3">
+            {userRole === "donor" && (
+              <Button onClick={() => navigate("/create-donation")} className="w-full">
+                <Package className="h-4 w-4 mr-2" />
+                Post Donation
+              </Button>
+            )}
+            {userRole === "recipient" && (
+              <Button onClick={() => navigate("/browse")} className="w-full">
+                <Users className="h-4 w-4 mr-2" />
+                Browse Food
+              </Button>
+            )}
+            <Button onClick={() => navigate("/matches")} className="w-full" variant="outline">
+              <Truck className="h-4 w-4 mr-2" />
+              View Matches
+            </Button>
+            <Button onClick={() => navigate("/profile")} className="w-full" variant="outline">
+              Profile Settings
+            </Button>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

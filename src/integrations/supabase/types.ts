@@ -14,6 +14,78 @@ export type Database = {
   }
   public: {
     Tables: {
+      ai_suggestions: {
+        Row: {
+          created_at: string
+          id: string
+          status: string
+          suggestion_data: Json
+          suggestion_type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          status?: string
+          suggestion_data: Json
+          suggestion_type: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          status?: string
+          suggestion_data?: Json
+          suggestion_type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      business_profiles: {
+        Row: {
+          address: string
+          business_name: string
+          business_type: string
+          created_at: string
+          description: string | null
+          email: string | null
+          id: string
+          license_number: string | null
+          operating_hours: string | null
+          phone: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          address: string
+          business_name: string
+          business_type: string
+          created_at?: string
+          description?: string | null
+          email?: string | null
+          id?: string
+          license_number?: string | null
+          operating_hours?: string | null
+          phone: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          address?: string
+          business_name?: string
+          business_type?: string
+          created_at?: string
+          description?: string | null
+          email?: string | null
+          id?: string
+          license_number?: string | null
+          operating_hours?: string | null
+          phone?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       donation_matches: {
         Row: {
           actual_pickup_time: string | null
@@ -158,6 +230,7 @@ export type Database = {
           full_name: string
           id: string
           organization_name: string | null
+          organization_type: string | null
           phone: string | null
           updated_at: string
         }
@@ -167,6 +240,7 @@ export type Database = {
           full_name: string
           id: string
           organization_name?: string | null
+          organization_type?: string | null
           phone?: string | null
           updated_at?: string
         }
@@ -176,6 +250,7 @@ export type Database = {
           full_name?: string
           id?: string
           organization_name?: string | null
+          organization_type?: string | null
           phone?: string | null
           updated_at?: string
         }

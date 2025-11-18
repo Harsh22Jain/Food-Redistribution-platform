@@ -15,17 +15,30 @@ interface Match {
   actual_pickup_time: string | null;
   delivery_time: string | null;
   notes: string | null;
+  volunteer_id: string | null;
   donation: {
     id: string;
     title: string;
+    description: string | null;
+    food_type: string;
     quantity: number;
     unit: string;
     pickup_location: string;
     pickup_time_start: string;
     pickup_time_end: string;
+    image_url: string | null;
+    donor_id: string;
     donor_profile: {
       full_name: string;
       phone: string | null;
+      organization_name: string | null;
+      organization_type: string | null;
+    };
+    business_profile?: {
+      business_name: string;
+      business_type: string;
+      address: string;
+      phone: string;
     };
   };
   recipient_profile: {
@@ -110,15 +123,21 @@ export default function Matches() {
         matchesData.map(async (match) => {
           const { data: donation } = await supabase
             .from("food_donations")
-            .select("id, title, quantity, unit, pickup_location, pickup_time_start, pickup_time_end, donor_id")
+            .select("id, title, description, food_type, quantity, unit, pickup_location, pickup_time_start, pickup_time_end, image_url, donor_id")
             .eq("id", match.donation_id)
             .single();
 
           const { data: donorProfile } = await supabase
             .from("profiles")
-            .select("full_name, phone")
+            .select("full_name, phone, organization_name, organization_type")
             .eq("id", donation?.donor_id)
             .single();
+
+          const { data: businessProfile } = await supabase
+            .from("business_profiles")
+            .select("business_name, business_type, address, phone")
+            .eq("user_id", donation?.donor_id)
+            .maybeSingle();
 
           const { data: recipientProfile } = await supabase
             .from("profiles")
@@ -339,124 +358,139 @@ export default function Matches() {
         ) : (
           <div className="space-y-4">
             {matches.map((match) => (
-              <Card key={match.id}>
+              <Card key={match.id} className="hover:shadow-md transition-shadow">
                 <CardHeader>
-                  <div className="flex items-start justify-between">
-                    <CardTitle className="text-xl">
-                      {match.donation.title}
-                    </CardTitle>
-                    <Badge className={getStatusColor(match.status)}>
-                      {match.status.replace("_", " ")}
-                    </Badge>
+                  <div className="flex items-start justify-between gap-4">
+                    {match.donation.image_url && (
+                      <img
+                        src={match.donation.image_url}
+                        alt={match.donation.title}
+                        className="w-24 h-24 rounded-lg object-cover"
+                      />
+                    )}
+                    <div className="flex-1">
+                      <CardTitle className="flex items-center gap-2">
+                        <Package className="h-5 w-5 text-primary" />
+                        {match.donation.title}
+                      </CardTitle>
+                      <div className="flex items-center gap-2 mt-2">
+                        <Badge className={getStatusColor(match.status)} variant="secondary">
+                          {match.status}
+                        </Badge>
+                        <Badge variant="outline">{match.donation.food_type}</Badge>
+                      </div>
+                    </div>
                   </div>
                 </CardHeader>
                 <CardContent className="space-y-4">
+                  {match.donation.description && (
+                    <p className="text-sm text-muted-foreground">{match.donation.description}</p>
+                  )}
+                  
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="flex items-start gap-2">
-                      <Package className="h-4 w-4 mt-1 text-muted-foreground" />
-                      <div>
-                        <p className="text-sm font-medium">Quantity</p>
-                        <p className="text-sm text-muted-foreground">
-                          {match.donation.quantity} {match.donation.unit}
-                        </p>
+                    <div className="space-y-3">
+                      <div className="flex items-center gap-2 text-sm">
+                        <Package className="h-4 w-4 text-muted-foreground" />
+                        <span className="font-medium">Quantity:</span>
+                        <span>{match.donation.quantity} {match.donation.unit}</span>
                       </div>
-                    </div>
-
-                    <div className="flex items-start gap-2">
-                      <MapPin className="h-4 w-4 mt-1 text-muted-foreground" />
-                      <div>
-                        <p className="text-sm font-medium">Pickup Location</p>
-                        <p className="text-sm text-muted-foreground">
-                          {match.donation.pickup_location}
-                        </p>
+                      <div className="flex items-center gap-2 text-sm">
+                        <MapPin className="h-4 w-4 text-muted-foreground" />
+                        <span className="font-medium">Location:</span>
+                        <span>{match.donation.pickup_location}</span>
                       </div>
-                    </div>
-
-                    <div className="flex items-start gap-2">
-                      <Clock className="h-4 w-4 mt-1 text-muted-foreground" />
-                      <div>
-                        <p className="text-sm font-medium">Pickup Window</p>
-                        <p className="text-sm text-muted-foreground">
-                          {new Date(match.donation.pickup_time_start).toLocaleString()} -{" "}
-                          {new Date(match.donation.pickup_time_end).toLocaleTimeString()}
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-start gap-2">
-                      <User className="h-4 w-4 mt-1 text-muted-foreground" />
-                      <div>
-                        <p className="text-sm font-medium">Donor</p>
-                        <p className="text-sm text-muted-foreground">
-                          {match.donation.donor_profile.full_name}
-                        </p>
-                        {match.donation.donor_profile.phone && (
-                          <p className="text-sm text-muted-foreground">
-                            {match.donation.donor_profile.phone}
+                      <div className="flex items-start gap-2 text-sm">
+                        <Clock className="h-4 w-4 text-muted-foreground mt-0.5" />
+                        <div>
+                          <p className="font-medium">Pickup Time:</p>
+                          <p className="text-muted-foreground">
+                            {new Date(match.donation.pickup_time_start).toLocaleString()} -
+                            {new Date(match.donation.pickup_time_end).toLocaleTimeString()}
                           </p>
-                        )}
+                        </div>
                       </div>
                     </div>
-                  </div>
 
-                  <Separator />
+                    <div className="space-y-3">
+                      <div className="flex items-start gap-2 text-sm">
+                        <User className="h-4 w-4 text-muted-foreground mt-0.5" />
+                        <div>
+                          <p className="font-medium">Donor:</p>
+                          {match.donation.business_profile ? (
+                            <>
+                              <p className="font-semibold text-primary">
+                                {match.donation.business_profile.business_name}
+                              </p>
+                              <Badge variant="outline" className="mt-1">
+                                {match.donation.business_profile.business_type}
+                              </Badge>
+                              <p className="text-sm mt-1">{match.donation.business_profile.address}</p>
+                              <p className="text-muted-foreground">{match.donation.business_profile.phone}</p>
+                            </>
+                          ) : (
+                            <>
+                              <p>{match.donation.donor_profile.full_name}</p>
+                              {match.donation.donor_profile.organization_name && (
+                                <p className="text-sm text-muted-foreground">
+                                  {match.donation.donor_profile.organization_name}
+                                </p>
+                              )}
+                              {match.donation.donor_profile.phone && (
+                                <p className="text-muted-foreground">{match.donation.donor_profile.phone}</p>
+                              )}
+                            </>
+                          )}
+                        </div>
+                      </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <p className="text-sm font-medium mb-1">Recipient</p>
-                      <p className="text-sm text-muted-foreground">
-                        {match.recipient_profile.full_name}
-                      </p>
-                      {match.recipient_profile.phone && (
-                        <p className="text-sm text-muted-foreground">
-                          {match.recipient_profile.phone}
-                        </p>
+                      <div className="flex items-start gap-2 text-sm">
+                        <User className="h-4 w-4 text-muted-foreground mt-0.5" />
+                        <div>
+                          <p className="font-medium">Recipient:</p>
+                          <p>{match.recipient_profile.full_name}</p>
+                          {match.recipient_profile.phone && (
+                            <p className="text-muted-foreground">{match.recipient_profile.phone}</p>
+                          )}
+                        </div>
+                      </div>
+
+                      {match.volunteer_profile && (
+                        <div className="flex items-start gap-2 text-sm">
+                          <User className="h-4 w-4 text-muted-foreground mt-0.5" />
+                          <div>
+                            <p className="font-medium">Volunteer:</p>
+                            <p>{match.volunteer_profile.full_name}</p>
+                            {match.volunteer_profile.phone && (
+                              <p className="text-muted-foreground">{match.volunteer_profile.phone}</p>
+                            )}
+                          </div>
+                        </div>
                       )}
                     </div>
-
-                    {match.volunteer_profile && (
-                      <div>
-                        <p className="text-sm font-medium mb-1">Volunteer</p>
-                        <p className="text-sm text-muted-foreground">
-                          {match.volunteer_profile.full_name}
-                        </p>
-                        {match.volunteer_profile.phone && (
-                          <p className="text-sm text-muted-foreground">
-                            {match.volunteer_profile.phone}
-                          </p>
-                        )}
-                      </div>
-                    )}
                   </div>
 
                   {match.notes && (
                     <>
                       <Separator />
-                      <div>
+                      <div className="bg-muted/50 p-3 rounded-lg">
                         <p className="text-sm font-medium mb-1">Notes</p>
                         <p className="text-sm text-muted-foreground">{match.notes}</p>
                       </div>
                     </>
                   )}
 
-                  <div className="flex gap-2 flex-wrap">
-                    {match.status === "completed" && (
-                      <Button
-                        variant="outline"
-                        onClick={() => {
-                          setSelectedMatch(match);
-                          setRatingDialogOpen(true);
-                        }}
-                        className="gap-2"
-                      >
-                        <Star className="w-4 h-4" />
-                        Rate Experience
+                  <Separator />
+
+                  <div className="flex flex-wrap gap-2">
+                    {userRole === "recipient" && match.status === "pending" && (
+                      <Button onClick={() => updateMatchStatus(match.id, "confirmed")}>
+                        Confirm Match
                       </Button>
                     )}
 
-                    {userRole === "volunteer" && match.status === "confirmed" && !match.volunteer_profile && (
+                    {userRole === "volunteer" && match.status === "confirmed" && !match.volunteer_id && (
                       <Button onClick={() => volunteerPickup(match.id)}>
-                        Accept Delivery
+                        Volunteer for Pickup
                       </Button>
                     )}
 
@@ -466,27 +500,41 @@ export default function Matches() {
                       </Button>
                     )}
 
-                    {userRole === "recipient" && match.status === "pending" && (
-                      <Button onClick={() => updateMatchStatus(match.id, "confirmed")}>
-                        Confirm Match
+                    {userRole === "recipient" && match.status === "in_transit" && (
+                      <Button onClick={() => updateMatchStatus(match.id, "completed")}>
+                        Accept Delivery
                       </Button>
                     )}
 
-                    {(userRole === "recipient" || userRole === "donor") && 
-                     (match.status === "pending" || match.status === "confirmed") && (
+                    {match.status === "completed" && (
                       <Button
-                        variant="destructive"
-                        onClick={() => updateMatchStatus(match.id, "cancelled")}
+                        onClick={() => {
+                          setSelectedMatch(match);
+                          setRatingDialogOpen(true);
+                        }}
+                        variant="outline"
                       >
-                        Cancel Match
+                        <Star className="h-4 w-4 mr-2" />
+                        Rate Experience
                       </Button>
                     )}
 
-                    {userRole === "recipient" && match.status === "cancelled" && (
-                      <Button onClick={() => reorderMatch(match)}>
+                    {match.status === "cancelled" && userRole === "recipient" && (
+                      <Button onClick={() => reorderMatch(match)} variant="outline">
                         Reorder
                       </Button>
                     )}
+
+                    {(userRole === "recipient" || userRole === "donor") &&
+                      match.status !== "completed" &&
+                      match.status !== "cancelled" && (
+                        <Button
+                          onClick={() => updateMatchStatus(match.id, "cancelled")}
+                          variant="destructive"
+                        >
+                          Cancel Match
+                        </Button>
+                      )}
                   </div>
                 </CardContent>
               </Card>
@@ -496,12 +544,9 @@ export default function Matches() {
 
         <RatingDialog
           isOpen={ratingDialogOpen}
-          onClose={() => {
-            setRatingDialogOpen(false);
-            setSelectedMatch(null);
-          }}
+          onClose={() => setRatingDialogOpen(false)}
           onSubmit={handleRateMatch}
-          title={selectedMatch?.donation.title || ""}
+          title={selectedMatch?.donation.title || "this donation"}
         />
       </div>
     </div>

@@ -1,12 +1,15 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Star } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Star, ArrowLeft } from 'lucide-react';
 import { format } from 'date-fns';
 import Navbar from '@/components/Navbar';
 
 const Reviews = () => {
+  const navigate = useNavigate();
   const [ratings, setRatings] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -96,6 +99,14 @@ const Reviews = () => {
     <div className="min-h-screen bg-background">
       <Navbar />
       <div className="container mx-auto px-4 py-8 pt-24">
+        <Button
+          variant="ghost"
+          onClick={() => navigate(-1)}
+          className="mb-6"
+        >
+          <ArrowLeft className="mr-2 h-4 w-4" />
+          Back
+        </Button>
         <h1 className="text-3xl font-bold mb-8 text-foreground">Community Reviews</h1>
 
         {ratings.length === 0 ? (

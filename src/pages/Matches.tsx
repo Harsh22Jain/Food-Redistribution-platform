@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { Calendar, MapPin, Package, Clock, User, Star } from "lucide-react";
+import Navbar from "@/components/Navbar";
+import { Calendar, MapPin, Package, Clock, User, Star, ArrowLeft } from "lucide-react";
 import { RatingDialog } from "@/components/RatingDialog";
 
 interface Match {
@@ -52,6 +54,7 @@ interface Match {
 }
 
 export default function Matches() {
+  const navigate = useNavigate();
   const [matches, setMatches] = useState<Match[]>([]);
   const [loading, setLoading] = useState(true);
   const [userRole, setUserRole] = useState<string>("");
@@ -345,8 +348,17 @@ export default function Matches() {
   }
 
   return (
-    <div className="min-h-screen bg-background py-8">
-      <div className="container max-w-4xl mx-auto px-4">
+    <div className="min-h-screen bg-background">
+      <Navbar />
+      <div className="container max-w-4xl mx-auto px-4 pt-24 pb-8">
+        <Button
+          variant="ghost"
+          onClick={() => navigate(-1)}
+          className="mb-6"
+        >
+          <ArrowLeft className="mr-2 h-4 w-4" />
+          Back
+        </Button>
         <h1 className="text-3xl font-bold mb-8">Food Donation Matches</h1>
 
         {matches.length === 0 ? (

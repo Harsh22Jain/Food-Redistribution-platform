@@ -6,7 +6,7 @@ import Navbar from "@/components/Navbar";
 import SmartMatchSuggestions from "@/components/SmartMatchSuggestions";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Package, Users, Truck, Bell, TrendingUp, Building2 } from "lucide-react";
+import { Package, Users, Truck, Bell, TrendingUp, Building2, History } from "lucide-react";
 
 interface Stats {
   activeDonations: number;
@@ -290,6 +290,10 @@ const Dashboard = () => {
             </Button>
             <Button onClick={() => navigate("/profile")} className="w-full" variant="outline">
               Profile Settings
+            </Button>
+            <Button onClick={() => navigate("/donation-history")} className="w-full" variant="outline">
+              <History className="h-4 w-4 mr-2" />
+              Donation History
             </Button>
           </CardContent>
         </Card>

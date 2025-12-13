@@ -13,6 +13,7 @@ import CreateDonation from "./pages/CreateDonation";
 import Matches from "./pages/Matches";
 import Reviews from "./pages/Reviews";
 import BusinessOnboarding from "./pages/BusinessOnboarding";
+import DonationHistory from "./pages/DonationHistory";
 import NotFound from "./pages/NotFound";
 import AIChatbot from "./components/AIChatbot";
 
@@ -35,6 +36,7 @@ const App = () => (
             <Route path="/matches" element={<Matches />} />
             <Route path="/reviews" element={<Reviews />} />
             <Route path="/business-onboarding" element={<BusinessOnboarding />} />
+            <Route path="/donation-history" element={<DonationHistory />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
           <AIChatbot />

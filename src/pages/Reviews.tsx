@@ -86,7 +86,7 @@ const Reviews = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen bg-[image:var(--gradient-page)]">
         <Navbar />
         <div className="container mx-auto px-4 py-8 pt-24">
           <p className="text-center text-muted-foreground">Loading reviews...</p>
@@ -96,7 +96,7 @@ const Reviews = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-[image:var(--gradient-page)]">
       <Navbar />
       <div className="container mx-auto px-4 py-8 pt-24">
         <Button

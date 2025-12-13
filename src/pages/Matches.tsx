@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import Navbar from "@/components/Navbar";
-import { Calendar, MapPin, Package, Clock, User, Star, ArrowLeft } from "lucide-react";
+import { Calendar, MapPin, Package, Clock, User, Star, ArrowLeft, Navigation } from "lucide-react";
 import { RatingDialog } from "@/components/RatingDialog";
 
 interface Match {
@@ -322,6 +322,11 @@ export default function Matches() {
     }
   };
 
+  const handleTrackPickup = (location: string) => {
+    const encodedLocation = encodeURIComponent(location);
+    window.open(`https://www.google.com/maps/search/?api=1&query=${encodedLocation}`, '_blank');
+  };
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case "pending":
@@ -341,14 +346,14 @@ export default function Matches() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
+      <div className="min-h-screen bg-[image:var(--gradient-page)] flex items-center justify-center">
         <p className="text-muted-foreground">Loading matches...</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-[image:var(--gradient-page)]">
       <Navbar />
       <div className="container max-w-4xl mx-auto px-4 pt-24 pb-8">
         <Button
@@ -407,9 +412,18 @@ export default function Matches() {
                         <span>{match.donation.quantity} {match.donation.unit}</span>
                       </div>
                       <div className="flex items-center gap-2 text-sm">
-                        <MapPin className="h-4 w-4 text-muted-foreground" />
+                        <MapPin className="h-4 w-4 text-muted-foreground flex-shrink-0" />
                         <span className="font-medium">Location:</span>
-                        <span>{match.donation.pickup_location}</span>
+                        <span className="flex-1">{match.donation.pickup_location}</span>
+                        <Button 
+                          size="sm" 
+                          variant="outline" 
+                          onClick={() => handleTrackPickup(match.donation.pickup_location)}
+                          className="ml-2 text-xs"
+                        >
+                          <Navigation className="h-3 w-3 mr-1" />
+                          Track
+                        </Button>
                       </div>
                       <div className="flex items-start gap-2 text-sm">
                         <Clock className="h-4 w-4 text-muted-foreground mt-0.5" />

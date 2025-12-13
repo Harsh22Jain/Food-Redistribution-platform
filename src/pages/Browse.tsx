@@ -155,7 +155,7 @@ const Browse = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-[image:var(--gradient-page)]">
       <Navbar />
       <div className="container mx-auto px-4 pt-24 pb-12">
         <div className="mb-8">

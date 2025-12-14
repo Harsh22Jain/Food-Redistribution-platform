@@ -2,11 +2,17 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { User } from "@supabase/supabase-js";
+import { motion } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import SmartMatchSuggestions from "@/components/SmartMatchSuggestions";
+import FloatingParticles from "@/components/FloatingParticles";
+import GlassCard from "@/components/GlassCard";
+import AnimatedCounter from "@/components/AnimatedCounter";
+import ImpactChart from "@/components/ImpactChart";
+import ProgressRing from "@/components/ProgressRing";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Package, Users, Truck, Bell, TrendingUp, Building2, History } from "lucide-react";
+import { Package, Users, Truck, TrendingUp, Building2, History, Sparkles, ArrowRight } from "lucide-react";
 
 interface Stats {
   activeDonations: number;
@@ -14,6 +20,21 @@ interface Stats {
   pendingMatches: number;
   totalImpact: number;
 }
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+    },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0 },
+};
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -68,28 +89,24 @@ const Dashboard = () => {
     if (!user) return;
 
     const fetchStats = async () => {
-      // Fetch active donations (for donors)
       const { count: activeDonations } = await supabase
         .from("food_donations")
         .select("*", { count: "exact", head: true })
         .eq("donor_id", user.id)
         .eq("status", "available");
 
-      // Fetch completed matches
       const { count: completedMatches } = await supabase
         .from("donation_matches")
         .select("*", { count: "exact", head: true })
         .or(`recipient_id.eq.${user.id},volunteer_id.eq.${user.id}`)
         .eq("status", "completed");
 
-      // Fetch pending matches
       const { count: pendingMatches } = await supabase
         .from("donation_matches")
         .select("*", { count: "exact", head: true })
         .or(`recipient_id.eq.${user.id},volunteer_id.eq.${user.id}`)
         .in("status", ["pending", "confirmed", "in_transit"]);
 
-      // Fetch total impact (all donations or matches)
       let totalImpact = 0;
       if (userRole === "donor") {
         const { count } = await supabase
@@ -115,7 +132,6 @@ const Dashboard = () => {
 
     fetchStats();
 
-    // Set up real-time subscriptions for live updates
     const donationsChannel = supabase
       .channel("donations_changes")
       .on(
@@ -154,150 +170,229 @@ const Dashboard = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p>Loading...</p>
+      <div className="min-h-screen flex items-center justify-center bg-[image:var(--gradient-page)]">
+        <motion.div
+          animate={{ rotate: 360 }}
+          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+          className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full"
+        />
       </div>
     );
   }
 
-  const roleCards = {
-    donor: {
-      title: "Post Food Donation",
-      description: "List surplus food items for those in need",
-      icon: Package,
-      action: () => navigate("/create-donation"),
-    },
-    recipient: {
-      title: "Browse Available Food",
-      description: "Find and claim food donations near you",
-      icon: Users,
-      action: () => navigate("/browse"),
-    },
-    volunteer: {
-      title: "Available Deliveries",
-      description: "Help deliver food to recipients",
-      icon: Truck,
-      action: () => navigate("/matches"),
-    },
-  };
-
-  const currentRoleCard = userRole && roleCards[userRole as keyof typeof roleCards];
+  const impactPercentage = stats.totalImpact > 0 ? Math.min((stats.completedMatches / stats.totalImpact) * 100, 100) : 0;
 
   return (
-    <div className="min-h-screen bg-[image:var(--gradient-page)]">
+    <div className="min-h-screen bg-[image:var(--gradient-page)] relative overflow-hidden">
+      <FloatingParticles />
       <Navbar />
-      <div className="container mx-auto px-4 py-8 pt-24">
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-2">Dashboard</h1>
-          <p className="text-muted-foreground">
-            Welcome back! Here's your impact overview.
+      
+      <motion.div 
+        className="container mx-auto px-4 py-8 pt-24 relative z-10"
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+      >
+        {/* Welcome Header */}
+        <motion.div variants={itemVariants} className="mb-8">
+          <div className="flex items-center gap-2 mb-2">
+            <Sparkles className="h-5 w-5 text-primary animate-pulse" />
+            <span className="text-sm font-medium text-primary">Welcome back!</span>
+          </div>
+          <h1 className="text-4xl md:text-5xl font-bold mb-2">
+            <span className="text-gradient">Dashboard</span>
+          </h1>
+          <p className="text-muted-foreground text-lg">
+            Here's your impact overview for today.
           </p>
-        </div>
+        </motion.div>
 
         {userRole === "recipient" && (
-          <div className="mb-8">
+          <motion.div variants={itemVariants} className="mb-8">
             <SmartMatchSuggestions />
-          </div>
+          </motion.div>
         )}
 
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-8">
+        {/* Stats Grid with Glass Cards */}
+        <motion.div 
+          variants={itemVariants}
+          className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-8"
+        >
           {userRole === "donor" && (
-            <Card className="md:col-span-2 lg:col-span-4 bg-gradient-to-r from-primary/10 to-accent/10 border-primary/20">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Building2 className="h-5 w-5 text-primary" />
-                  Business Account
-                </CardTitle>
-                <CardDescription>
-                  Manage your business profile and expand your impact
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Button onClick={() => navigate("/business-onboarding")} variant="default">
-                  Update Business Profile
+            <GlassCard gradient="primary" glow className="md:col-span-2 lg:col-span-4 p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className="flex items-center gap-2 mb-2">
+                    <Building2 className="h-5 w-5 text-primary" />
+                    <h3 className="font-semibold text-lg">Business Account</h3>
+                  </div>
+                  <p className="text-muted-foreground">
+                    Manage your business profile and expand your impact
+                  </p>
+                </div>
+                <Button 
+                  onClick={() => navigate("/business-onboarding")} 
+                  className="group"
+                >
+                  Update Profile
+                  <ArrowRight className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform" />
                 </Button>
-              </CardContent>
-            </Card>
+              </div>
+            </GlassCard>
           )}
           
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                {userRole === "donor" ? "Active Donations" : "Available Food"}
-              </CardTitle>
-              <Package className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{stats.activeDonations}</div>
-            </CardContent>
-          </Card>
+          {/* Stat Cards */}
+          <GlassCard className="p-6 card-shine">
+            <div className="flex items-center justify-between mb-4">
+              <div className="p-3 rounded-xl bg-primary/10">
+                <Package className="h-6 w-6 text-primary" />
+              </div>
+              <span className="text-xs font-medium text-primary bg-primary/10 px-2 py-1 rounded-full">
+                Active
+              </span>
+            </div>
+            <AnimatedCounter 
+              value={stats.activeDonations} 
+              className="text-3xl font-bold block mb-1"
+            />
+            <p className="text-sm text-muted-foreground">
+              {userRole === "donor" ? "Active Donations" : "Available Food"}
+            </p>
+          </GlassCard>
 
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Completed Matches</CardTitle>
-              <Users className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{stats.completedMatches}</div>
-            </CardContent>
-          </Card>
+          <GlassCard className="p-6 card-shine">
+            <div className="flex items-center justify-between mb-4">
+              <div className="p-3 rounded-xl bg-accent/10">
+                <Users className="h-6 w-6 text-accent" />
+              </div>
+              <span className="text-xs font-medium text-accent bg-accent/10 px-2 py-1 rounded-full">
+                Completed
+              </span>
+            </div>
+            <AnimatedCounter 
+              value={stats.completedMatches} 
+              className="text-3xl font-bold block mb-1"
+            />
+            <p className="text-sm text-muted-foreground">Completed Matches</p>
+          </GlassCard>
 
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Pending Matches</CardTitle>
-              <Truck className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{stats.pendingMatches}</div>
-            </CardContent>
-          </Card>
+          <GlassCard className="p-6 card-shine">
+            <div className="flex items-center justify-between mb-4">
+              <div className="p-3 rounded-xl bg-secondary/10">
+                <Truck className="h-6 w-6 text-secondary" />
+              </div>
+              <span className="text-xs font-medium text-secondary bg-secondary/10 px-2 py-1 rounded-full">
+                Pending
+              </span>
+            </div>
+            <AnimatedCounter 
+              value={stats.pendingMatches} 
+              className="text-3xl font-bold block mb-1"
+            />
+            <p className="text-sm text-muted-foreground">Pending Matches</p>
+          </GlassCard>
 
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Impact</CardTitle>
-              <TrendingUp className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{stats.totalImpact}</div>
-              <p className="text-xs text-muted-foreground">
-                {userRole === "donor" ? "donations" : "matches"}
-              </p>
-            </CardContent>
-          </Card>
-        </div>
+          <GlassCard className="p-6 card-shine">
+            <div className="flex items-center justify-between mb-4">
+              <div className="p-3 rounded-xl bg-primary/10">
+                <TrendingUp className="h-6 w-6 text-primary" />
+              </div>
+              <span className="text-xs font-medium text-primary bg-primary/10 px-2 py-1 rounded-full">
+                Total
+              </span>
+            </div>
+            <AnimatedCounter 
+              value={stats.totalImpact} 
+              className="text-3xl font-bold block mb-1"
+            />
+            <p className="text-sm text-muted-foreground">
+              Total {userRole === "donor" ? "Donations" : "Matches"}
+            </p>
+          </GlassCard>
+        </motion.div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Quick Actions</CardTitle>
-            <CardDescription>Navigate to key features</CardDescription>
-          </CardHeader>
-          <CardContent className="grid gap-4 md:grid-cols-3">
-            {userRole === "donor" && (
-              <Button onClick={() => navigate("/create-donation")} className="w-full">
-                <Package className="h-4 w-4 mr-2" />
-                Post Donation
+        {/* Impact Section */}
+        <motion.div variants={itemVariants} className="grid gap-6 lg:grid-cols-3 mb-8">
+          {/* Progress Ring Card */}
+          <GlassCard gradient="primary" className="p-6 flex flex-col items-center justify-center">
+            <h3 className="font-semibold mb-4">Completion Rate</h3>
+            <ProgressRing progress={impactPercentage} size={140} color="primary">
+              <div className="text-center">
+                <AnimatedCounter 
+                  value={Math.round(impactPercentage)} 
+                  suffix="%" 
+                  className="text-2xl font-bold"
+                />
+                <p className="text-xs text-muted-foreground">Complete</p>
+              </div>
+            </ProgressRing>
+          </GlassCard>
+
+          {/* Charts Card */}
+          <GlassCard className="p-6 lg:col-span-2">
+            <h3 className="font-semibold mb-4">Activity Overview</h3>
+            <ImpactChart 
+              stats={{
+                available: stats.activeDonations,
+                matched: stats.pendingMatches,
+                completed: stats.completedMatches,
+                expired: 0,
+              }}
+            />
+          </GlassCard>
+        </motion.div>
+
+        {/* Quick Actions */}
+        <motion.div variants={itemVariants}>
+          <GlassCard className="p-6">
+            <h3 className="font-semibold text-lg mb-4">Quick Actions</h3>
+            <div className="grid gap-4 md:grid-cols-4">
+              {userRole === "donor" && (
+                <Button 
+                  onClick={() => navigate("/create-donation")} 
+                  className="w-full h-auto py-4 flex flex-col gap-2 hover-lift"
+                >
+                  <Package className="h-5 w-5" />
+                  <span>Post Donation</span>
+                </Button>
+              )}
+              {userRole === "recipient" && (
+                <Button 
+                  onClick={() => navigate("/browse")} 
+                  className="w-full h-auto py-4 flex flex-col gap-2 hover-lift"
+                >
+                  <Users className="h-5 w-5" />
+                  <span>Browse Food</span>
+                </Button>
+              )}
+              <Button 
+                onClick={() => navigate("/matches")} 
+                variant="outline"
+                className="w-full h-auto py-4 flex flex-col gap-2 hover-lift glass"
+              >
+                <Truck className="h-5 w-5" />
+                <span>View Matches</span>
               </Button>
-            )}
-            {userRole === "recipient" && (
-              <Button onClick={() => navigate("/browse")} className="w-full">
-                <Users className="h-4 w-4 mr-2" />
-                Browse Food
+              <Button 
+                onClick={() => navigate("/profile")} 
+                variant="outline"
+                className="w-full h-auto py-4 flex flex-col gap-2 hover-lift glass"
+              >
+                <Users className="h-5 w-5" />
+                <span>Profile Settings</span>
               </Button>
-            )}
-            <Button onClick={() => navigate("/matches")} className="w-full" variant="outline">
-              <Truck className="h-4 w-4 mr-2" />
-              View Matches
-            </Button>
-            <Button onClick={() => navigate("/profile")} className="w-full" variant="outline">
-              Profile Settings
-            </Button>
-            <Button onClick={() => navigate("/donation-history")} className="w-full" variant="outline">
-              <History className="h-4 w-4 mr-2" />
-              Donation History
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
+              <Button 
+                onClick={() => navigate("/donation-history")} 
+                variant="outline"
+                className="w-full h-auto py-4 flex flex-col gap-2 hover-lift glass"
+              >
+                <History className="h-5 w-5" />
+                <span>Donation History</span>
+              </Button>
+            </div>
+          </GlassCard>
+        </motion.div>
+      </motion.div>
     </div>
   );
 };

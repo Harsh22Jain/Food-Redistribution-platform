@@ -16,12 +16,14 @@ const AIChatbot = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const scrollRef = useRef<HTMLDivElement>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
 
   useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-    }
+    scrollToBottom();
   }, [messages]);
 
   const streamChat = async (messages: Message[]) => {
@@ -186,7 +188,7 @@ const AIChatbot = () => {
           </CardHeader>
           
           <CardContent className="flex-1 flex flex-col p-0 bg-gradient-to-b from-emerald-50/50 to-background dark:from-emerald-950/20 dark:to-background">
-            <ScrollArea className="flex-1 px-4" ref={scrollRef}>
+            <ScrollArea className="flex-1 px-4">
               <div className="space-y-4 py-4">
                 {messages.length === 0 && (
                   <motion.div 
@@ -252,6 +254,7 @@ const AIChatbot = () => {
                     </div>
                   </motion.div>
                 )}
+                <div ref={messagesEndRef} />
               </div>
             </ScrollArea>
             

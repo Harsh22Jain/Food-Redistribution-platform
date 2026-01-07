@@ -46,7 +46,7 @@ const Navbar = () => {
     { to: "/dashboard", label: "Dashboard" },
     { to: "/browse", label: "Browse" },
     { to: "/matches", label: "Matches" },
-    { to: "/reviews", label: "Reviews" },
+    { to: "/reports", label: "Reports" },
   ];
 
   return (

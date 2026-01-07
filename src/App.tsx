@@ -12,6 +12,7 @@ import Profile from "./pages/Profile";
 import CreateDonation from "./pages/CreateDonation";
 import Matches from "./pages/Matches";
 import Reviews from "./pages/Reviews";
+import Reports from "./pages/Reports";
 import BusinessOnboarding from "./pages/BusinessOnboarding";
 import DonationHistory from "./pages/DonationHistory";
 import NotFound from "./pages/NotFound";
@@ -35,6 +36,7 @@ const App = () => (
             <Route path="/create-donation" element={<CreateDonation />} />
             <Route path="/matches" element={<Matches />} />
             <Route path="/reviews" element={<Reviews />} />
+            <Route path="/reports" element={<Reports />} />
             <Route path="/business-onboarding" element={<BusinessOnboarding />} />
             <Route path="/donation-history" element={<DonationHistory />} />
             <Route path="*" element={<NotFound />} />

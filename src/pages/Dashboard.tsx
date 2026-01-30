@@ -39,7 +39,7 @@ const itemVariants = {
 const Dashboard = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState<User | null>(null);
-  const [userRole, setUserRole] = useState<string | null>(null);
+  const [userRoles, setUserRoles] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState<Stats>({
     activeDonations: 0,
@@ -62,11 +62,10 @@ const Dashboard = () => {
       const { data: roleData } = await supabase
         .from("user_roles")
         .select("role")
-        .eq("user_id", session.user.id)
-        .single();
+        .eq("user_id", session.user.id);
 
-      if (roleData) {
-        setUserRole(roleData.role);
+      if (roleData && roleData.length > 0) {
+        setUserRoles(roleData.map(r => r.role));
       }
 
       setLoading(false);
@@ -108,7 +107,8 @@ const Dashboard = () => {
         .in("status", ["pending", "confirmed", "in_transit"]);
 
       let totalImpact = 0;
-      if (userRole === "donor") {
+      const isDonor = userRoles.includes("donor");
+      if (isDonor) {
         const { count } = await supabase
           .from("food_donations")
           .select("*", { count: "exact", head: true })
@@ -166,7 +166,7 @@ const Dashboard = () => {
       supabase.removeChannel(donationsChannel);
       supabase.removeChannel(matchesChannel);
     };
-  }, [user, userRole]);
+  }, [user, userRoles]);
 
   if (loading) {
     return (
@@ -181,6 +181,9 @@ const Dashboard = () => {
   }
 
   const impactPercentage = stats.totalImpact > 0 ? Math.min((stats.completedMatches / stats.totalImpact) * 100, 100) : 0;
+  const isDonor = userRoles.includes("donor");
+  const isRecipient = userRoles.includes("recipient");
+  const isBusiness = isDonor; // Business accounts have donor role
 
   return (
     <div className="min-h-screen bg-[image:var(--gradient-page)] relative overflow-hidden">
@@ -207,7 +210,7 @@ const Dashboard = () => {
           </p>
         </motion.div>
 
-        {userRole === "recipient" && (
+        {(isRecipient || isBusiness) && (
           <motion.div variants={itemVariants} className="mb-8">
             <SmartMatchSuggestions />
           </motion.div>
@@ -218,7 +221,7 @@ const Dashboard = () => {
           variants={itemVariants}
           className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-8"
         >
-          {userRole === "donor" && (
+          {isDonor && (
             <GlassCard gradient="primary" glow className="md:col-span-2 lg:col-span-4 p-6">
               <div className="flex items-center justify-between">
                 <div>
@@ -227,7 +230,7 @@ const Dashboard = () => {
                     <h3 className="font-semibold text-lg">Business Account</h3>
                   </div>
                   <p className="text-muted-foreground">
-                    Manage your business profile and expand your impact
+                    You can both donate food and claim available donations
                   </p>
                 </div>
                 <Button 
@@ -256,7 +259,7 @@ const Dashboard = () => {
               className="text-3xl font-bold block mb-1"
             />
             <p className="text-sm text-muted-foreground">
-              {userRole === "donor" ? "Active Donations" : "Available Food"}
+              {isDonor ? "Active Donations" : "Available Food"}
             </p>
           </GlassCard>
 
@@ -306,7 +309,7 @@ const Dashboard = () => {
               className="text-3xl font-bold block mb-1"
             />
             <p className="text-sm text-muted-foreground">
-              Total {userRole === "donor" ? "Donations" : "Matches"}
+              Total {isDonor ? "Donations" : "Matches"}
             </p>
           </GlassCard>
         </motion.div>
@@ -347,7 +350,7 @@ const Dashboard = () => {
           <GlassCard className="p-6">
             <h3 className="font-semibold text-lg mb-4">Quick Actions</h3>
             <div className="grid gap-4 md:grid-cols-4">
-              {userRole === "donor" && (
+              {isDonor && (
                 <Button 
                   onClick={() => navigate("/create-donation")} 
                   className="w-full h-auto py-4 flex flex-col gap-2 hover-lift"
@@ -356,10 +359,11 @@ const Dashboard = () => {
                   <span>Post Donation</span>
                 </Button>
               )}
-              {userRole === "recipient" && (
+              {(isRecipient || isDonor) && (
                 <Button 
                   onClick={() => navigate("/browse")} 
                   className="w-full h-auto py-4 flex flex-col gap-2 hover-lift"
+                  variant={isDonor ? "outline" : "default"}
                 >
                   <Users className="h-5 w-5" />
                   <span>Browse Food</span>

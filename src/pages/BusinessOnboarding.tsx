@@ -80,12 +80,22 @@ export default function BusinessOnboarding() {
 
         if (error) throw error;
 
-        // Update user role to donor
-        const { error: roleError } = await supabase
-          .from("user_roles")
-          .insert([{ user_id: user.id, role: "donor" }]);
+        // Assign both donor and recipient roles to business accounts
+        const rolesToInsert = [
+          { user_id: user.id, role: "donor" as const },
+          { user_id: user.id, role: "recipient" as const }
+        ];
 
-        if (roleError && !roleError.message.includes("duplicate")) throw roleError;
+        for (const roleData of rolesToInsert) {
+          const { error: roleError } = await supabase
+            .from("user_roles")
+            .insert([roleData]);
+
+          // Ignore duplicate key errors
+          if (roleError && !roleError.message.includes("duplicate")) {
+            console.error("Role insert error:", roleError);
+          }
+        }
 
         // Update organization type
         await supabase

@@ -7,9 +7,9 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import Navbar from "@/components/Navbar";
-import { Calendar, MapPin, Package, Clock, User, Star, ArrowLeft, Navigation } from "lucide-react";
+import { Calendar, MapPin, Package, Clock, User, Star, ArrowLeft, Navigation, Radio } from "lucide-react";
 import { RatingDialog } from "@/components/RatingDialog";
-
+import LiveTrackingMap from "@/components/LiveTrackingMap";
 interface Match {
   id: string;
   status: string;
@@ -60,6 +60,7 @@ export default function Matches() {
   const [userRole, setUserRole] = useState<string>("");
   const [ratingDialogOpen, setRatingDialogOpen] = useState(false);
   const [selectedMatch, setSelectedMatch] = useState<Match | null>(null);
+  const [trackingMatch, setTrackingMatch] = useState<Match | null>(null);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -415,15 +416,28 @@ export default function Matches() {
                         <MapPin className="h-4 w-4 text-muted-foreground flex-shrink-0" />
                         <span className="font-medium">Location:</span>
                         <span className="flex-1">{match.donation.pickup_location}</span>
-                        <Button 
-                          size="sm" 
-                          variant="outline" 
-                          onClick={() => handleTrackPickup(match.donation.pickup_location)}
-                          className="ml-2 text-xs"
-                        >
-                          <Navigation className="h-3 w-3 mr-1" />
-                          Track
-                        </Button>
+                        <div className="flex gap-1">
+                          <Button 
+                            size="sm" 
+                            variant="outline" 
+                            onClick={() => handleTrackPickup(match.donation.pickup_location)}
+                            className="text-xs"
+                          >
+                            <Navigation className="h-3 w-3 mr-1" />
+                            Map
+                          </Button>
+                          {(match.status === "confirmed" || match.status === "in_transit") && (
+                            <Button 
+                              size="sm" 
+                              variant="default"
+                              onClick={() => setTrackingMatch(match)}
+                              className="text-xs gap-1"
+                            >
+                              <Radio className="h-3 w-3" />
+                              Live
+                            </Button>
+                          )}
+                        </div>
                       </div>
                       <div className="flex items-start gap-2 text-sm">
                         <Clock className="h-4 w-4 text-muted-foreground mt-0.5" />
@@ -574,6 +588,18 @@ export default function Matches() {
           onSubmit={handleRateMatch}
           title={selectedMatch?.donation.title || "this donation"}
         />
+
+        {trackingMatch && (
+          <LiveTrackingMap
+            matchId={trackingMatch.id}
+            pickupLocation={trackingMatch.donation.pickup_location}
+            onClose={() => setTrackingMatch(null)}
+            userRole={userRole}
+            donorName={trackingMatch.donation.business_profile?.business_name || trackingMatch.donation.donor_profile.full_name}
+            recipientName={trackingMatch.recipient_profile.full_name}
+            volunteerName={trackingMatch.volunteer_profile?.full_name}
+          />
+        )}
       </div>
     </div>
   );

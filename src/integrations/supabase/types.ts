@@ -190,6 +190,53 @@ export type Database = {
         }
         Relationships: []
       }
+      live_locations: {
+        Row: {
+          accuracy: number | null
+          created_at: string
+          heading: number | null
+          id: string
+          latitude: number
+          longitude: number
+          match_id: string | null
+          speed: number | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          accuracy?: number | null
+          created_at?: string
+          heading?: number | null
+          id?: string
+          latitude: number
+          longitude: number
+          match_id?: string | null
+          speed?: number | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          accuracy?: number | null
+          created_at?: string
+          heading?: number | null
+          id?: string
+          latitude?: number
+          longitude?: number
+          match_id?: string | null
+          speed?: number | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "live_locations_match_id_fkey"
+            columns: ["match_id"]
+            isOneToOne: false
+            referencedRelation: "donation_matches"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       notifications: {
         Row: {
           created_at: string

@@ -5,3 +5,12 @@ enabled = true
 
 [functions.create-notification]
 verify_jwt = false
+
+[functions.ai-chat]
+verify_jwt = false
+
+[functions.ai-agent]
+verify_jwt = false
+
+[functions.proactive-agent]
+verify_jwt = false

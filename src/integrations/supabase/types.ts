@@ -14,6 +14,42 @@ export type Database = {
   }
   public: {
     Tables: {
+      agent_actions: {
+        Row: {
+          action_data: Json
+          action_type: string
+          created_at: string
+          description: string
+          expires_at: string | null
+          id: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          action_data?: Json
+          action_type: string
+          created_at?: string
+          description: string
+          expires_at?: string | null
+          id?: string
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          action_data?: Json
+          action_type?: string
+          created_at?: string
+          description?: string
+          expires_at?: string | null
+          id?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       ai_suggestions: {
         Row: {
           created_at: string

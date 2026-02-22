@@ -1,14 +1,27 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { MessageCircle, Send, X, Sparkles, Bot } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Send, X, Sparkles, Bot, Check, XIcon, Zap, Brain } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
+import ReactMarkdown from 'react-markdown';
 
 interface Message {
   role: 'user' | 'assistant';
   content: string;
+}
+
+interface AgentAction {
+  id: string;
+  action_type: string;
+  description: string;
+  action_data: any;
+  status: string;
+  created_at: string;
 }
 
 const AIChatbot = () => {
@@ -16,7 +29,9 @@ const AIChatbot = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [pendingActions, setPendingActions] = useState<AgentAction[]>([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const { toast } = useToast();
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -24,86 +39,151 @@ const AIChatbot = () => {
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages]);
+  }, [messages, pendingActions]);
 
-  const streamChat = async (messages: Message[]) => {
-    const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-chat`;
-    
-    const resp = await fetch(CHAT_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
-      },
-      body: JSON.stringify({ messages }),
-    });
+  // Subscribe to agent_actions realtime
+  useEffect(() => {
+    if (!isOpen) return;
 
-    if (!resp.ok || !resp.body) throw new Error('Failed to start stream');
+    fetchPendingActions();
 
-    const reader = resp.body.getReader();
-    const decoder = new TextDecoder();
-    let textBuffer = '';
-    let assistantContent = '';
+    const channel = supabase
+      .channel('agent-actions-realtime')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'agent_actions' },
+        () => fetchPendingActions()
+      )
+      .subscribe();
 
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      
-      textBuffer += decoder.decode(value, { stream: true });
+    return () => { supabase.removeChannel(channel); };
+  }, [isOpen]);
 
-      let newlineIndex: number;
-      while ((newlineIndex = textBuffer.indexOf('\n')) !== -1) {
-        let line = textBuffer.slice(0, newlineIndex);
-        textBuffer = textBuffer.slice(newlineIndex + 1);
+  const fetchPendingActions = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
 
-        if (line.endsWith('\r')) line = line.slice(0, -1);
-        if (line.startsWith(':') || line.trim() === '') continue;
-        if (!line.startsWith('data: ')) continue;
+    const { data } = await supabase
+      .from('agent_actions')
+      .select('*')
+      .eq('user_id', user.id)
+      .eq('status', 'pending')
+      .order('created_at', { ascending: false })
+      .limit(5);
 
-        const jsonStr = line.slice(6).trim();
-        if (jsonStr === '[DONE]') break;
+    if (data) setPendingActions(data as AgentAction[]);
+  };
 
-        try {
-          const parsed = JSON.parse(jsonStr);
-          const content = parsed.choices?.[0]?.delta?.content as string | undefined;
-          if (content) {
-            assistantContent += content;
-            setMessages(prev => {
-              const last = prev[prev.length - 1];
-              if (last?.role === 'assistant') {
-                return prev.map((m, i) => 
-                  i === prev.length - 1 ? { ...m, content: assistantContent } : m
-                );
-              }
-              return [...prev, { role: 'assistant', content: assistantContent }];
-            });
-          }
-        } catch {
-          textBuffer = line + '\n' + textBuffer;
-          break;
-        }
+  const handleAgentChat = async (allMessages: Message[]) => {
+    const { data: { session } } = await supabase.auth.getSession();
+    const token = session?.access_token || import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+
+    const resp = await fetch(
+      `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-agent`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ messages: allMessages }),
       }
+    );
+
+    if (!resp.ok) {
+      const err = await resp.json().catch(() => ({ error: 'Unknown error' }));
+      throw new Error(err.error || `Error ${resp.status}`);
     }
+
+    const data = await resp.json();
+    return data;
   };
 
   const handleSend = async () => {
     if (!input.trim() || isLoading) return;
 
     const userMessage: Message = { role: 'user', content: input };
-    setMessages(prev => [...prev, userMessage]);
+    const updatedMessages = [...messages, userMessage];
+    setMessages(updatedMessages);
     setInput('');
     setIsLoading(true);
 
     try {
-      await streamChat([...messages, userMessage]);
-    } catch (error) {
-      console.error('Chat error:', error);
+      const data = await handleAgentChat(updatedMessages);
+      setMessages(prev => [...prev, { role: 'assistant', content: data.response }]);
+      if (data.pending_actions?.length) {
+        setPendingActions(data.pending_actions);
+      }
+    } catch (error: any) {
+      console.error('Agent error:', error);
       setMessages(prev => [
         ...prev,
-        { role: 'assistant', content: 'Sorry, I encountered an error. Please try again.' }
+        { role: 'assistant', content: `Sorry, I encountered an error: ${error.message}` },
       ]);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleApproveAction = useCallback(async (action: AgentAction) => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      // Execute the action based on type
+      if (action.action_type === 'auto_match' && action.action_data.donation_id) {
+        const { error } = await supabase.from('donation_matches').insert({
+          donation_id: action.action_data.donation_id,
+          recipient_id: user.id,
+          status: 'pending',
+        });
+        if (error) throw error;
+      } else if (action.action_type === 'task_execute' && action.action_data.task === 'create_donation') {
+        const donationData = action.action_data.donation_data;
+        const { error } = await supabase.from('food_donations').insert({
+          ...donationData,
+          donor_id: user.id,
+          status: 'available',
+        });
+        if (error) throw error;
+      }
+
+      // Mark action as approved
+      await supabase
+        .from('agent_actions')
+        .update({ status: 'approved' })
+        .eq('id', action.id);
+
+      setPendingActions(prev => prev.filter(a => a.id !== action.id));
+      toast({ title: '✅ Action Approved', description: action.description });
+
+      // Inform the chat
+      setMessages(prev => [
+        ...prev,
+        { role: 'assistant', content: `✅ **Action approved**: ${action.description}` },
+      ]);
+    } catch (error: any) {
+      toast({ title: 'Error', description: error.message, variant: 'destructive' });
+    }
+  }, [toast]);
+
+  const handleRejectAction = useCallback(async (action: AgentAction) => {
+    await supabase
+      .from('agent_actions')
+      .update({ status: 'rejected' })
+      .eq('id', action.id);
+
+    setPendingActions(prev => prev.filter(a => a.id !== action.id));
+    toast({ title: 'Action Rejected', description: 'The proposed action was dismissed.' });
+  }, [toast]);
+
+  const getActionIcon = (type: string) => {
+    switch (type) {
+      case 'auto_match': return <Zap className="h-4 w-4 text-yellow-500" />;
+      case 'route_optimize': return <Brain className="h-4 w-4 text-blue-500" />;
+      case 'proactive_alert': return <Sparkles className="h-4 w-4 text-orange-500" />;
+      case 'task_execute': return <Check className="h-4 w-4 text-green-500" />;
+      default: return <Bot className="h-4 w-4" />;
     }
   };
 
@@ -121,21 +201,17 @@ const AIChatbot = () => {
         >
           <motion.div
             className="absolute inset-0 bg-gradient-to-br from-emerald-400/50 via-transparent to-cyan-400/50"
-            animate={{
-              rotate: [0, 360],
-            }}
-            transition={{
-              duration: 8,
-              repeat: Infinity,
-              ease: "linear"
-            }}
+            animate={{ rotate: [0, 360] }}
+            transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
           />
+          {pendingActions.length > 0 && (
+            <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center z-20 font-bold">
+              {pendingActions.length}
+            </span>
+          )}
           <div className="absolute inset-0 rounded-full ring-2 ring-emerald-400/30 animate-ping" />
-          <motion.div
-            animate={{ rotate: [0, 10, -10, 0] }}
-            transition={{ duration: 2, repeat: Infinity }}
-          >
-            <Sparkles className="h-7 w-7 text-white relative z-10" />
+          <motion.div animate={{ rotate: [0, 10, -10, 0] }} transition={{ duration: 2, repeat: Infinity }}>
+            <Brain className="h-7 w-7 text-white relative z-10" />
           </motion.div>
         </Button>
       </motion.div>
@@ -150,35 +226,34 @@ const AIChatbot = () => {
         exit={{ opacity: 0, y: 20, scale: 0.95 }}
         className="fixed bottom-6 right-6 z-50"
       >
-        <Card className="w-96 h-[520px] shadow-2xl flex flex-col overflow-hidden border-0 bg-gradient-to-b from-background to-background/95 backdrop-blur-xl">
-          {/* Header with gradient */}
+        <Card className="w-[420px] h-[600px] shadow-2xl flex flex-col overflow-hidden border-0 bg-gradient-to-b from-background to-background/95 backdrop-blur-xl">
           <CardHeader className="relative pb-4 bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 text-white">
             <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxjaXJjbGUgZmlsbD0iI2ZmZiIgZmlsbC1vcGFjaXR5PSIuMSIgY3g9IjIwIiBjeT0iMjAiIHI9IjEiLz48L2c+PC9zdmc+')] opacity-50" />
             <div className="flex items-center justify-between relative z-10">
               <div className="flex items-center gap-3">
                 <motion.div
-                  animate={{ 
+                  animate={{
                     boxShadow: [
                       "0 0 0 0 rgba(255,255,255,0.4)",
                       "0 0 0 10px rgba(255,255,255,0)",
-                    ]
+                    ],
                   }}
                   transition={{ duration: 1.5, repeat: Infinity }}
                   className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center"
                 >
-                  <Bot className="h-5 w-5 text-white" />
+                  <Brain className="h-5 w-5 text-white" />
                 </motion.div>
                 <div>
-                  <h3 className="font-bold text-lg">NourishNet AI</h3>
+                  <h3 className="font-bold text-lg">NourishNet Agent</h3>
                   <p className="text-xs text-white/80 flex items-center gap-1">
                     <span className="w-2 h-2 rounded-full bg-green-300 animate-pulse" />
-                    Online & Ready to Help
+                    Agentic AI • Suggest & Confirm
                   </p>
                 </div>
               </div>
-              <Button 
-                variant="ghost" 
-                size="icon" 
+              <Button
+                variant="ghost"
+                size="icon"
                 onClick={() => setIsOpen(false)}
                 className="text-white hover:bg-white/20 rounded-full"
               >
@@ -186,29 +261,43 @@ const AIChatbot = () => {
               </Button>
             </div>
           </CardHeader>
-          
+
           <CardContent className="flex-1 flex flex-col p-0 bg-gradient-to-b from-emerald-50/50 to-background dark:from-emerald-950/20 dark:to-background">
             <ScrollArea className="flex-1 px-4">
               <div className="space-y-4 py-4">
-                {messages.length === 0 && (
-                  <motion.div 
+                {messages.length === 0 && pendingActions.length === 0 && (
+                  <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="text-center py-8"
+                    className="text-center py-6"
                   >
                     <motion.div
                       animate={{ y: [0, -5, 0] }}
                       transition={{ duration: 2, repeat: Infinity }}
                       className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center shadow-lg"
                     >
-                      <Sparkles className="h-8 w-8 text-white" />
+                      <Brain className="h-8 w-8 text-white" />
                     </motion.div>
-                    <p className="font-semibold text-foreground mb-1">Welcome to NourishNet AI!</p>
-                    <p className="text-sm text-muted-foreground">
-                      Ask me about donations, volunteering, or anything about the platform!
+                    <p className="font-semibold text-foreground mb-1">NourishNet AI Agent</p>
+                    <p className="text-sm text-muted-foreground mb-4">
+                      I can search donations, create matches, optimize routes, and more — all with your approval.
                     </p>
+                    <div className="flex flex-wrap gap-2 justify-center">
+                      {["Find me food nearby", "Donate my surplus", "Check expiring donations", "My stats"].map((q) => (
+                        <Button
+                          key={q}
+                          variant="outline"
+                          size="sm"
+                          className="text-xs rounded-full"
+                          onClick={() => { setInput(q); }}
+                        >
+                          {q}
+                        </Button>
+                      ))}
+                    </div>
                   </motion.div>
                 )}
+
                 {messages.map((msg, idx) => (
                   <motion.div
                     key={idx}
@@ -223,33 +312,83 @@ const AIChatbot = () => {
                           : 'bg-white dark:bg-slate-800 border border-emerald-100 dark:border-emerald-900/30 rounded-bl-md'
                       }`}
                     >
-                      <p className="text-sm whitespace-pre-wrap leading-relaxed">{msg.content}</p>
+                      {msg.role === 'assistant' ? (
+                        <div className="text-sm prose prose-sm dark:prose-invert max-w-none leading-relaxed [&>p]:mb-2 [&>ul]:mb-2 [&>ol]:mb-2">
+                          <ReactMarkdown>{msg.content}</ReactMarkdown>
+                        </div>
+                      ) : (
+                        <p className="text-sm whitespace-pre-wrap leading-relaxed">{msg.content}</p>
+                      )}
                     </div>
                   </motion.div>
                 ))}
-                {isLoading && messages[messages.length - 1]?.role === 'user' && (
-                  <motion.div 
+
+                {/* Pending Actions */}
+                {pendingActions.length > 0 && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="space-y-3"
+                  >
+                    <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                      <Zap className="h-3 w-3" />
+                      Pending Approvals
+                    </div>
+                    {pendingActions.map((action) => (
+                      <motion.div
+                        key={action.id}
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        className="bg-white dark:bg-slate-800 border-2 border-primary/20 rounded-xl p-4 shadow-sm"
+                      >
+                        <div className="flex items-start gap-3">
+                          {getActionIcon(action.action_type)}
+                          <div className="flex-1 min-w-0">
+                            <Badge variant="outline" className="text-xs mb-2">
+                              {action.action_type.replace('_', ' ')}
+                            </Badge>
+                            <p className="text-sm text-foreground leading-relaxed">
+                              {action.description}
+                            </p>
+                            <div className="flex gap-2 mt-3">
+                              <Button
+                                size="sm"
+                                onClick={() => handleApproveAction(action)}
+                                className="text-xs gap-1 bg-emerald-500 hover:bg-emerald-600"
+                              >
+                                <Check className="h-3 w-3" /> Approve
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                onClick={() => handleRejectAction(action)}
+                                className="text-xs gap-1 text-destructive"
+                              >
+                                <XIcon className="h-3 w-3" /> Reject
+                              </Button>
+                            </div>
+                          </div>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </motion.div>
+                )}
+
+                {isLoading && (
+                  <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     className="flex justify-start"
                   >
                     <div className="bg-white dark:bg-slate-800 border border-emerald-100 dark:border-emerald-900/30 rounded-2xl rounded-bl-md px-4 py-3 shadow-sm">
-                      <div className="flex gap-1.5">
+                      <div className="flex items-center gap-2">
                         <motion.div
-                          animate={{ scale: [1, 1.2, 1] }}
-                          transition={{ duration: 0.6, repeat: Infinity, delay: 0 }}
-                          className="w-2 h-2 bg-emerald-500 rounded-full"
-                        />
-                        <motion.div
-                          animate={{ scale: [1, 1.2, 1] }}
-                          transition={{ duration: 0.6, repeat: Infinity, delay: 0.2 }}
-                          className="w-2 h-2 bg-teal-500 rounded-full"
-                        />
-                        <motion.div
-                          animate={{ scale: [1, 1.2, 1] }}
-                          transition={{ duration: 0.6, repeat: Infinity, delay: 0.4 }}
-                          className="w-2 h-2 bg-cyan-500 rounded-full"
-                        />
+                          animate={{ rotate: 360 }}
+                          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                        >
+                          <Brain className="h-4 w-4 text-primary" />
+                        </motion.div>
+                        <span className="text-xs text-muted-foreground">Agent is thinking & executing tools...</span>
                       </div>
                     </div>
                   </motion.div>
@@ -257,25 +396,22 @@ const AIChatbot = () => {
                 <div ref={messagesEndRef} />
               </div>
             </ScrollArea>
-            
+
             <div className="p-4 border-t border-emerald-100 dark:border-emerald-900/30 bg-background/80 backdrop-blur-sm">
               <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  handleSend();
-                }}
+                onSubmit={(e) => { e.preventDefault(); handleSend(); }}
                 className="flex gap-2"
               >
                 <Input
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
-                  placeholder="Ask anything..."
+                  placeholder="Ask the agent anything..."
                   disabled={isLoading}
                   className="border-emerald-200 dark:border-emerald-800 focus-visible:ring-emerald-500 rounded-xl bg-white dark:bg-slate-900"
                 />
-                <Button 
-                  type="submit" 
-                  size="icon" 
+                <Button
+                  type="submit"
+                  size="icon"
                   disabled={isLoading || !input.trim()}
                   className="rounded-xl bg-gradient-to-br from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 shadow-md"
                 >

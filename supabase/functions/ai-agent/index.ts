@@ -338,17 +338,19 @@ serve(async (req) => {
     if (!LOVABLE_API_KEY) throw new Error("API key not configured");
     if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) throw new Error("Supabase not configured");
 
-    // Extract user ID from auth header
+    // Extract user from auth header
     const authHeader = req.headers.get("authorization") || "";
-    const token = authHeader.replace("Bearer ", "");
-
     const supabaseAdmin = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
-    const supabaseUser = createClient(SUPABASE_URL, token);
 
-    const { data: { user }, error: authError } = await supabaseUser.auth.getUser(token);
-    if (authError || !user) {
+    // Try to get user from the token
+    const token = authHeader.replace("Bearer ", "");
+    const { data: claimsData, error: claimsError } = await supabaseAdmin.auth.getUser(token);
+    
+    let user = claimsData?.user;
+    if (claimsError || !user) {
+      // If no valid user token, return unauthorized
       return new Response(
-        JSON.stringify({ error: "Unauthorized" }),
+        JSON.stringify({ error: "Please log in to use the AI agent." }),
         { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }

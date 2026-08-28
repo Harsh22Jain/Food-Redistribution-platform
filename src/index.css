@@ -294,4 +294,157 @@ All colors MUST be HSL.
   .card-shine:hover::before {
     left: 100%;
   }
+
+  /* Hologram effects */
+  @keyframes hologram-scan {
+    0% { transform: translateY(-100%); }
+    100% { transform: translateY(100%); }
+  }
+
+  @keyframes hologram-flicker {
+    0%, 100% { opacity: 1; }
+    5% { opacity: 0.8; }
+    10% { opacity: 1; }
+    15% { opacity: 0.9; }
+    20% { opacity: 1; }
+    50% { opacity: 0.85; }
+    52% { opacity: 1; }
+    80% { opacity: 0.9; }
+    82% { opacity: 1; }
+  }
+
+  @keyframes hologram-pulse {
+    0%, 100% { 
+      box-shadow: 0 0 20px -5px hsl(180 100% 50% / 0.4), inset 0 0 20px -10px hsl(180 100% 50% / 0.2);
+    }
+    50% { 
+      box-shadow: 0 0 40px -5px hsl(180 100% 50% / 0.7), inset 0 0 30px -10px hsl(180 100% 50% / 0.4);
+    }
+  }
+
+  @keyframes hologram-rotate {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  @keyframes hologram-float {
+    0%, 100% { transform: translateY(0) translateZ(20px); }
+    50% { transform: translateY(-10px) translateZ(30px); }
+  }
+
+  @keyframes hologram-border {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  @keyframes ring-spin {
+    0% { transform: rotateX(70deg) rotateZ(0deg); }
+    100% { transform: rotateX(70deg) rotateZ(360deg); }
+  }
+
+  @keyframes ring-spin-reverse {
+    0% { transform: rotateX(70deg) rotateZ(360deg); }
+    100% { transform: rotateX(70deg) rotateZ(0deg); }
+  }
+
+  .hologram-scanlines {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hologram-scanlines::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      hsl(180 100% 50% / 0.03) 2px,
+      hsl(180 100% 50% / 0.03) 4px
+    );
+    pointer-events: none;
+    z-index: 10;
+    animation: hologram-flicker 4s infinite;
+  }
+
+  .hologram-scanlines::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, transparent, hsl(180 100% 60% / 0.6), transparent);
+    box-shadow: 0 0 20px hsl(180 100% 60% / 0.8);
+    pointer-events: none;
+    z-index: 11;
+    animation: hologram-scan 3s linear infinite;
+  }
+
+  .hologram-glow {
+    box-shadow: 
+      0 0 30px -5px hsl(180 100% 50% / 0.4),
+      0 0 60px -15px hsl(190 100% 60% / 0.3),
+      inset 0 0 30px -15px hsl(180 100% 50% / 0.2);
+  }
+
+  .hologram-border {
+    position: relative;
+    background: linear-gradient(135deg, hsl(180 100% 50% / 0.15), hsl(190 100% 60% / 0.08), hsl(180 100% 50% / 0.15));
+    background-size: 200% 200%;
+    animation: hologram-border 4s ease infinite;
+  }
+
+  .hologram-border::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    padding: 1px;
+    border-radius: inherit;
+    background: linear-gradient(135deg, hsl(180 100% 60%), hsl(190 100% 70%), hsl(180 100% 60%), hsl(160 100% 60%));
+    background-size: 300% 300%;
+    animation: hologram-border 3s ease infinite;
+    -webkit-mask: 
+      linear-gradient(#fff 0 0) content-box, 
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+
+  .hologram-tilt {
+    transform-style: preserve-3d;
+    perspective: 1000px;
+    transition: transform 0.3s ease;
+  }
+
+  .hologram-text {
+    color: hsl(180 100% 60%);
+    text-shadow: 
+      0 0 5px hsl(180 100% 60% / 0.5),
+      0 0 10px hsl(180 100% 60% / 0.3),
+      0 0 20px hsl(180 100% 60% / 0.2);
+  }
+
+  .hologram-ring {
+    border: 2px solid hsl(180 100% 60% / 0.5);
+    border-top-color: hsl(180 100% 70%);
+    border-bottom-color: transparent;
+    border-radius: 50%;
+    box-shadow: 0 0 20px hsl(180 100% 60% / 0.4);
+  }
+
+  .perspective-1000 {
+    perspective: 1000px;
+  }
+
+  .preserve-3d {
+    transform-style: preserve-3d;
+  }
+
+  .backface-hidden {
+    backface-visibility: hidden;
+  }
 }

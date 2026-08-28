@@ -99,6 +99,37 @@ export default {
           from: { transform: "rotate(0deg)" },
           to: { transform: "rotate(360deg)" },
         },
+        "hologram-scan": {
+          "0%": { transform: "translateY(-100%)" },
+          "100%": { transform: "translateY(100%)" },
+        },
+        "hologram-flicker": {
+          "0%, 100%": { opacity: "1" },
+          "5%": { opacity: "0.8" },
+          "10%": { opacity: "1" },
+          "15%": { opacity: "0.9" },
+          "20%": { opacity: "1" },
+          "50%": { opacity: "0.85" },
+          "52%": { opacity: "1" },
+          "80%": { opacity: "0.9" },
+          "82%": { opacity: "1" },
+        },
+        "hologram-pulse": {
+          "0%, 100%": { 
+            boxShadow: "0 0 20px -5px hsl(180 100% 50% / 0.4), inset 0 0 20px -10px hsl(180 100% 50% / 0.2)"
+          },
+          "50%": { 
+            boxShadow: "0 0 40px -5px hsl(180 100% 50% / 0.7), inset 0 0 30px -10px hsl(180 100% 50% / 0.4)"
+          },
+        },
+        "ring-spin": {
+          "0%": { transform: "rotateX(70deg) rotateZ(0deg)" },
+          "100%": { transform: "rotateX(70deg) rotateZ(360deg)" },
+        },
+        "ring-spin-reverse": {
+          "0%": { transform: "rotateX(70deg) rotateZ(360deg)" },
+          "100%": { transform: "rotateX(70deg) rotateZ(0deg)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -109,6 +140,11 @@ export default {
         "slide-up": "slide-up 0.5s ease-out",
         "scale-in": "scale-in 0.3s ease-out",
         "rotate-slow": "rotate-slow 20s linear infinite",
+        "hologram-scan": "hologram-scan 3s linear infinite",
+        "hologram-flicker": "hologram-flicker 4s infinite",
+        "hologram-pulse": "hologram-pulse 2s ease-in-out infinite",
+        "ring-spin": "ring-spin 8s linear infinite",
+        "ring-spin-reverse": "ring-spin-reverse 12s linear infinite",
       },
       backdropBlur: {
         xs: "2px",

@@ -212,7 +212,9 @@ const Dashboard = () => {
 
         {(isRecipient || isBusiness) && (
           <motion.div variants={itemVariants} className="mb-8">
-            <SmartMatchSuggestions />
+            <GlassCard hologram gradient="primary" className="p-1">
+              <SmartMatchSuggestions />
+            </GlassCard>
           </motion.div>
         )}
 
@@ -222,12 +224,12 @@ const Dashboard = () => {
           className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-8"
         >
           {isDonor && (
-            <GlassCard gradient="primary" glow className="md:col-span-2 lg:col-span-4 p-6">
+            <GlassCard hologram gradient="primary" glow className="md:col-span-2 lg:col-span-4 p-6">
               <div className="flex items-center justify-between">
                 <div>
                   <div className="flex items-center gap-2 mb-2">
-                    <Building2 className="h-5 w-5 text-primary" />
-                    <h3 className="font-semibold text-lg">Business Account</h3>
+                    <Building2 className="h-5 w-5 text-cyan-400" />
+                    <h3 className="font-semibold text-lg hologram-text">Business Account</h3>
                   </div>
                   <p className="text-muted-foreground">
                     You can both donate food and claim available donations
@@ -235,7 +237,7 @@ const Dashboard = () => {
                 </div>
                 <Button 
                   onClick={() => navigate("/business-onboarding")} 
-                  className="group"
+                  className="group bg-gradient-to-r from-cyan-500 to-teal-500 hover:from-cyan-600 hover:to-teal-600"
                 >
                   Update Profile
                   <ArrowRight className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform" />
@@ -245,68 +247,68 @@ const Dashboard = () => {
           )}
           
           {/* Stat Cards */}
-          <GlassCard className="p-6 card-shine">
+          <GlassCard hologram className="p-6 card-shine">
             <div className="flex items-center justify-between mb-4">
-              <div className="p-3 rounded-xl bg-primary/10">
-                <Package className="h-6 w-6 text-primary" />
+              <div className="p-3 rounded-xl bg-cyan-500/10">
+                <Package className="h-6 w-6 text-cyan-400" />
               </div>
-              <span className="text-xs font-medium text-primary bg-primary/10 px-2 py-1 rounded-full">
+              <span className="text-xs font-medium text-cyan-400 bg-cyan-400/10 px-2 py-1 rounded-full">
                 Active
               </span>
             </div>
             <AnimatedCounter 
               value={stats.activeDonations} 
-              className="text-3xl font-bold block mb-1"
+              className="text-3xl font-bold block mb-1 hologram-text"
             />
             <p className="text-sm text-muted-foreground">
               {isDonor ? "Active Donations" : "Available Food"}
             </p>
           </GlassCard>
 
-          <GlassCard className="p-6 card-shine">
+          <GlassCard hologram className="p-6 card-shine">
             <div className="flex items-center justify-between mb-4">
-              <div className="p-3 rounded-xl bg-accent/10">
-                <Users className="h-6 w-6 text-accent" />
+              <div className="p-3 rounded-xl bg-teal-500/10">
+                <Users className="h-6 w-6 text-teal-400" />
               </div>
-              <span className="text-xs font-medium text-accent bg-accent/10 px-2 py-1 rounded-full">
+              <span className="text-xs font-medium text-teal-400 bg-teal-400/10 px-2 py-1 rounded-full">
                 Completed
               </span>
             </div>
             <AnimatedCounter 
               value={stats.completedMatches} 
-              className="text-3xl font-bold block mb-1"
+              className="text-3xl font-bold block mb-1 hologram-text"
             />
             <p className="text-sm text-muted-foreground">Completed Matches</p>
           </GlassCard>
 
-          <GlassCard className="p-6 card-shine">
+          <GlassCard hologram className="p-6 card-shine">
             <div className="flex items-center justify-between mb-4">
-              <div className="p-3 rounded-xl bg-secondary/10">
-                <Truck className="h-6 w-6 text-secondary" />
+              <div className="p-3 rounded-xl bg-emerald-500/10">
+                <Truck className="h-6 w-6 text-emerald-400" />
               </div>
-              <span className="text-xs font-medium text-secondary bg-secondary/10 px-2 py-1 rounded-full">
+              <span className="text-xs font-medium text-emerald-400 bg-emerald-400/10 px-2 py-1 rounded-full">
                 Pending
               </span>
             </div>
             <AnimatedCounter 
               value={stats.pendingMatches} 
-              className="text-3xl font-bold block mb-1"
+              className="text-3xl font-bold block mb-1 hologram-text"
             />
             <p className="text-sm text-muted-foreground">Pending Matches</p>
           </GlassCard>
 
-          <GlassCard className="p-6 card-shine">
+          <GlassCard hologram className="p-6 card-shine">
             <div className="flex items-center justify-between mb-4">
-              <div className="p-3 rounded-xl bg-primary/10">
-                <TrendingUp className="h-6 w-6 text-primary" />
+              <div className="p-3 rounded-xl bg-cyan-500/10">
+                <TrendingUp className="h-6 w-6 text-cyan-400" />
               </div>
-              <span className="text-xs font-medium text-primary bg-primary/10 px-2 py-1 rounded-full">
+              <span className="text-xs font-medium text-cyan-400 bg-cyan-400/10 px-2 py-1 rounded-full">
                 Total
               </span>
             </div>
             <AnimatedCounter 
               value={stats.totalImpact} 
-              className="text-3xl font-bold block mb-1"
+              className="text-3xl font-bold block mb-1 hologram-text"
             />
             <p className="text-sm text-muted-foreground">
               Total {isDonor ? "Donations" : "Matches"}

@@ -182,11 +182,11 @@ const AIChatbot = () => {
 
   const getActionIcon = (type: string) => {
     switch (type) {
-      case 'auto_match': return <Zap className="h-4 w-4 text-yellow-500" />;
-      case 'route_optimize': return <Brain className="h-4 w-4 text-blue-500" />;
-      case 'proactive_alert': return <Sparkles className="h-4 w-4 text-orange-500" />;
-      case 'task_execute': return <Check className="h-4 w-4 text-green-500" />;
-      default: return <Bot className="h-4 w-4" />;
+      case 'auto_match': return <Zap className="h-4 w-4 text-cyan-400" />;
+      case 'route_optimize': return <Brain className="h-4 w-4 text-teal-400" />;
+      case 'proactive_alert': return <Sparkles className="h-4 w-4 text-cyan-400" />;
+      case 'task_execute': return <Check className="h-4 w-4 text-emerald-400" />;
+      default: return <Bot className="h-4 w-4 text-cyan-400" />;
     }
   };
 
@@ -199,22 +199,39 @@ const AIChatbot = () => {
       >
         <Button
           onClick={() => setIsOpen(true)}
-          className="relative rounded-full h-16 w-16 shadow-2xl bg-gradient-to-br from-emerald-500 via-teal-500 to-cyan-500 hover:from-emerald-600 hover:via-teal-600 hover:to-cyan-600 border-0 group overflow-hidden"
+          className="relative rounded-full h-16 w-16 shadow-2xl bg-gradient-to-br from-cyan-500 via-teal-500 to-emerald-500 hover:from-cyan-600 hover:via-teal-600 hover:to-emerald-600 border-0 group overflow-hidden hologram-glow"
           size="icon"
         >
+          {/* Rotating energy ring */}
           <motion.div
-            className="absolute inset-0 bg-gradient-to-br from-emerald-400/50 via-transparent to-cyan-400/50"
+            className="absolute inset-1 rounded-full border-2 border-cyan-300/40 border-t-cyan-200 border-b-transparent"
             animate={{ rotate: [0, 360] }}
-            transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+            transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
           />
+          
+          {/* Inner rotating ring */}
+          <motion.div
+            className="absolute inset-2 rounded-full border-2 border-teal-300/30 border-l-teal-200 border-r-transparent"
+            animate={{ rotate: [360, 0] }}
+            transition={{ duration: 5, repeat: Infinity, ease: "linear" }}
+          />
+          
           {pendingActions.length > 0 && (
-            <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center z-20 font-bold">
+            <span className="absolute -top-1 -right-1 bg-cyan-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center z-20 font-bold shadow-[0_0_10px_hsl(180_100%_50%_/0.8)]">
               {pendingActions.length}
             </span>
           )}
-          <div className="absolute inset-0 rounded-full ring-2 ring-emerald-400/30 animate-ping" />
-          <motion.div animate={{ rotate: [0, 10, -10, 0] }} transition={{ duration: 2, repeat: Infinity }}>
-            <Brain className="h-7 w-7 text-white relative z-10" />
+          
+          {/* Ping rings */}
+          <div className="absolute inset-0 rounded-full ring-2 ring-cyan-400/30 animate-ping" />
+          <div className="absolute inset-0 rounded-full ring-2 ring-teal-400/20 animate-ping" style={{ animationDelay: '0.5s' }} />
+          
+          <motion.div 
+            animate={{ rotate: [0, 10, -10, 0] }} 
+            transition={{ duration: 2, repeat: Infinity }}
+            className="relative z-10"
+          >
+            <Brain className="h-7 w-7 text-white drop-shadow-[0_0_8px_rgba(34,211,238,0.8)]" />
           </motion.div>
         </Button>
       </motion.div>
@@ -229,28 +246,42 @@ const AIChatbot = () => {
         exit={{ opacity: 0, y: 20, scale: 0.95 }}
         className="fixed bottom-6 right-6 z-50"
       >
-        <Card className="w-[420px] h-[600px] shadow-2xl flex flex-col overflow-hidden border-0 bg-gradient-to-b from-background to-background/95 backdrop-blur-xl">
-          <CardHeader className="relative pb-4 bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 text-white">
+        <Card className="w-[420px] h-[600px] shadow-2xl flex flex-col overflow-hidden border-0 bg-slate-950/90 backdrop-blur-2xl hologram-border hologram-scanlines hologram-glow">
+          {/* Holographic header */}
+          <CardHeader className="relative pb-4 bg-gradient-to-r from-cyan-600/80 via-teal-600/80 to-emerald-600/80 text-white border-b border-cyan-400/30">
             <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxjaXJjbGUgZmlsbD0iI2ZmZiIgZmlsbC1vcGFjaXR5PSIuMSIgY3g9IjIwIiBjeT0iMjAiIHI9IjEiLz48L2c+PC9zdmc+')] opacity-50" />
             <div className="flex items-center justify-between relative z-10">
               <div className="flex items-center gap-3">
-                <motion.div
-                  animate={{
-                    boxShadow: [
-                      "0 0 0 0 rgba(255,255,255,0.4)",
-                      "0 0 0 10px rgba(255,255,255,0)",
-                    ],
-                  }}
-                  transition={{ duration: 1.5, repeat: Infinity }}
-                  className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center"
-                >
-                  <Brain className="h-5 w-5 text-white" />
-                </motion.div>
+                {/* Holographic avatar */}
+                <div className="relative w-12 h-12 flex items-center justify-center">
+                  <motion.div
+                    className="absolute inset-0 rounded-full border-2 border-cyan-300/50 border-t-cyan-100 border-b-transparent"
+                    animate={{ rotate: [0, 360] }}
+                    transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+                  />
+                  <motion.div
+                    className="absolute inset-1 rounded-full border-2 border-teal-300/40 border-l-teal-100 border-r-transparent"
+                    animate={{ rotate: [360, 0] }}
+                    transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
+                  />
+                  <motion.div
+                    animate={{
+                      boxShadow: [
+                        "0 0 0 0 rgba(34,211,238,0.4)",
+                        "0 0 0 10px rgba(34,211,238,0)",
+                      ],
+                    }}
+                    transition={{ duration: 1.5, repeat: Infinity }}
+                    className="w-10 h-10 rounded-full bg-cyan-500/30 backdrop-blur-sm flex items-center justify-center border border-cyan-300/50"
+                  >
+                    <Brain className="h-5 w-5 text-white drop-shadow-[0_0_8px_rgba(34,211,238,0.8)]" />
+                  </motion.div>
+                </div>
                 <div>
-                  <h3 className="font-bold text-lg">NourishNet Agent</h3>
-                  <p className="text-xs text-white/80 flex items-center gap-1">
-                    <span className="w-2 h-2 rounded-full bg-green-300 animate-pulse" />
-                    Agentic AI • Suggest & Confirm
+                  <h3 className="font-bold text-lg tracking-wide drop-shadow-[0_0_10px_rgba(34,211,238,0.5)]">NourishNet Agent</h3>
+                  <p className="text-xs text-cyan-100/80 flex items-center gap-1">
+                    <span className="w-2 h-2 rounded-full bg-cyan-300 animate-pulse shadow-[0_0_8px_hsl(180_100%_50%)]" />
+                    Holographic AI • Suggest & Confirm
                   </p>
                 </div>
               </div>
@@ -258,14 +289,14 @@ const AIChatbot = () => {
                 variant="ghost"
                 size="icon"
                 onClick={() => setIsOpen(false)}
-                className="text-white hover:bg-white/20 rounded-full"
+                className="text-white hover:bg-cyan-500/20 rounded-full"
               >
                 <X className="h-5 w-5" />
               </Button>
             </div>
           </CardHeader>
 
-          <CardContent className="flex-1 flex flex-col p-0 bg-gradient-to-b from-emerald-50/50 to-background dark:from-emerald-950/20 dark:to-background">
+          <CardContent className="flex-1 flex flex-col p-0 bg-gradient-to-b from-cyan-950/20 to-slate-950/80">
             <ScrollArea className="flex-1 px-4">
               <div className="space-y-4 py-4">
                 {messages.length === 0 && pendingActions.length === 0 && (
@@ -277,12 +308,22 @@ const AIChatbot = () => {
                     <motion.div
                       animate={{ y: [0, -5, 0] }}
                       transition={{ duration: 2, repeat: Infinity }}
-                      className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center shadow-lg"
+                      className="w-20 h-20 mx-auto mb-4 relative flex items-center justify-center"
                     >
-                      <Brain className="h-8 w-8 text-white" />
+                      <motion.div
+                        className="absolute inset-0 rounded-full border-2 border-cyan-400/40 border-t-cyan-300"
+                        animate={{ rotate: [0, 360] }}
+                        transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+                      />
+                      <motion.div
+                        className="absolute inset-2 rounded-full border-2 border-teal-400/30 border-l-teal-300"
+                        animate={{ rotate: [360, 0] }}
+                        transition={{ duration: 5, repeat: Infinity, ease: "linear" }}
+                      />
+                      <Brain className="h-8 w-8 text-cyan-300 drop-shadow-[0_0_10px_rgba(34,211,238,0.8)]" />
                     </motion.div>
-                    <p className="font-semibold text-foreground mb-1">NourishNet AI Agent</p>
-                    <p className="text-sm text-muted-foreground mb-4">
+                    <p className="font-semibold text-cyan-100 mb-1">NourishNet AI Agent</p>
+                    <p className="text-sm text-cyan-200/60 mb-4">
                       I can search donations, create matches, optimize routes, and more — all with your approval.
                     </p>
                     <div className="flex flex-wrap gap-2 justify-center">
@@ -291,7 +332,7 @@ const AIChatbot = () => {
                           key={q}
                           variant="outline"
                           size="sm"
-                          className="text-xs rounded-full"
+                          className="text-xs rounded-full border-cyan-400/30 text-cyan-100 hover:bg-cyan-500/20 hover:text-white"
                           onClick={() => { setInput(q); }}
                         >
                           {q}
@@ -311,12 +352,12 @@ const AIChatbot = () => {
                     <div
                       className={`rounded-2xl px-4 py-3 max-w-[85%] shadow-sm ${
                         msg.role === 'user'
-                          ? 'bg-gradient-to-br from-emerald-500 to-teal-500 text-white rounded-br-md'
-                          : 'bg-white dark:bg-slate-800 border border-emerald-100 dark:border-emerald-900/30 rounded-bl-md'
+                          ? 'bg-gradient-to-br from-cyan-500 to-teal-500 text-white rounded-br-md shadow-[0_0_20px_-5px_hsl(180_100%_50%_/0.4)]'
+                          : 'bg-slate-900/80 border border-cyan-400/30 rounded-bl-md backdrop-blur-sm'
                       }`}
                     >
                       {msg.role === 'assistant' ? (
-                        <div className="text-sm prose prose-sm dark:prose-invert max-w-none leading-relaxed [&>p]:mb-2 [&>ul]:mb-2 [&>ol]:mb-2">
+                        <div className="text-sm prose prose-sm dark:prose-invert max-w-none leading-relaxed [&>p]:mb-2 [&>ul]:mb-2 [&>ol]:mb-2 text-cyan-50">
                           <ReactMarkdown>{msg.content}</ReactMarkdown>
                         </div>
                       ) : (
@@ -333,7 +374,7 @@ const AIChatbot = () => {
                     animate={{ opacity: 1, y: 0 }}
                     className="space-y-3"
                   >
-                    <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                    <div className="flex items-center gap-2 text-xs font-medium text-cyan-300 uppercase tracking-wider">
                       <Zap className="h-3 w-3" />
                       Pending Approvals
                     </div>
@@ -342,22 +383,22 @@ const AIChatbot = () => {
                         key={action.id}
                         initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
-                        className="bg-white dark:bg-slate-800 border-2 border-primary/20 rounded-xl p-4 shadow-sm"
+                        className="bg-slate-900/80 border-2 border-cyan-400/40 rounded-xl p-4 shadow-sm backdrop-blur-sm"
                       >
                         <div className="flex items-start gap-3">
                           {getActionIcon(action.action_type)}
                           <div className="flex-1 min-w-0">
-                            <Badge variant="outline" className="text-xs mb-2">
+                            <Badge variant="outline" className="text-xs mb-2 border-cyan-400/40 text-cyan-200">
                               {action.action_type.replace('_', ' ')}
                             </Badge>
-                            <p className="text-sm text-foreground leading-relaxed">
+                            <p className="text-sm text-cyan-50 leading-relaxed">
                               {action.description}
                             </p>
                             <div className="flex gap-2 mt-3">
                               <Button
                                 size="sm"
                                 onClick={() => handleApproveAction(action)}
-                                className="text-xs gap-1 bg-emerald-500 hover:bg-emerald-600"
+                                className="text-xs gap-1 bg-cyan-500 hover:bg-cyan-600 shadow-[0_0_15px_-3px_hsl(180_100%_50%_/0.5)]"
                               >
                                 <Check className="h-3 w-3" /> Approve
                               </Button>
@@ -365,7 +406,7 @@ const AIChatbot = () => {
                                 size="sm"
                                 variant="ghost"
                                 onClick={() => handleRejectAction(action)}
-                                className="text-xs gap-1 text-destructive"
+                                className="text-xs gap-1 text-cyan-200 hover:bg-cyan-500/20"
                               >
                                 <XIcon className="h-3 w-3" /> Reject
                               </Button>
@@ -383,15 +424,15 @@ const AIChatbot = () => {
                     animate={{ opacity: 1 }}
                     className="flex justify-start"
                   >
-                    <div className="bg-white dark:bg-slate-800 border border-emerald-100 dark:border-emerald-900/30 rounded-2xl rounded-bl-md px-4 py-3 shadow-sm">
+                    <div className="bg-slate-900/80 border border-cyan-400/30 rounded-2xl rounded-bl-md px-4 py-3 shadow-sm">
                       <div className="flex items-center gap-2">
                         <motion.div
                           animate={{ rotate: 360 }}
                           transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
                         >
-                          <Brain className="h-4 w-4 text-primary" />
+                          <Brain className="h-4 w-4 text-cyan-400" />
                         </motion.div>
-                        <span className="text-xs text-muted-foreground">Agent is thinking & executing tools...</span>
+                        <span className="text-xs text-cyan-200/70">Agent is thinking & executing tools...</span>
                       </div>
                     </div>
                   </motion.div>
@@ -400,7 +441,7 @@ const AIChatbot = () => {
               </div>
             </ScrollArea>
 
-            <div className="p-4 border-t border-emerald-100 dark:border-emerald-900/30 bg-background/80 backdrop-blur-sm">
+            <div className="p-4 border-t border-cyan-400/30 bg-slate-950/80 backdrop-blur-sm">
               <form
                 onSubmit={(e) => { e.preventDefault(); handleSend(); }}
                 className="flex gap-2"
@@ -408,15 +449,15 @@ const AIChatbot = () => {
                 <Input
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
-                  placeholder="Ask the agent anything..."
+                  placeholder="Ask the holographic agent anything..."
                   disabled={isLoading}
-                  className="border-emerald-200 dark:border-emerald-800 focus-visible:ring-emerald-500 rounded-xl bg-white dark:bg-slate-900"
+                  className="border-cyan-400/30 focus-visible:ring-cyan-400 rounded-xl bg-slate-900/80 text-cyan-50 placeholder:text-cyan-200/40"
                 />
                 <Button
                   type="submit"
                   size="icon"
                   disabled={isLoading || !input.trim()}
-                  className="rounded-xl bg-gradient-to-br from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 shadow-md"
+                  className="rounded-xl bg-gradient-to-br from-cyan-500 to-teal-500 hover:from-cyan-600 hover:to-teal-600 shadow-[0_0_20px_-5px_hsl(180_100%_50%_/0.5)] border-0"
                 >
                   <Send className="h-4 w-4" />
                 </Button>

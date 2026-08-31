@@ -88,26 +88,26 @@ const Profile = () => {
           <Button
             variant="ghost"
             onClick={() => navigate(-1)}
-            className="mb-6"
+            className="mb-6 hover-lift"
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back
           </Button>
           <div className="mb-8 flex items-center gap-4">
-            <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center">
-              <User className="w-8 h-8 text-primary" />
+            <div className="w-16 h-16 bg-cyan-500/10 rounded-full flex items-center justify-center border border-cyan-400/30 shadow-[0_0_20px_-5px_hsl(180_100%_50%_/0.3)]">
+              <User className="w-8 h-8 text-cyan-400" />
             </div>
             <div>
-              <h1 className="text-4xl font-bold">Profile Settings</h1>
+              <h1 className="text-4xl font-bold hologram-text">Profile Settings</h1>
               <p className="text-muted-foreground">Manage your account information</p>
             </div>
           </div>
 
-          <Card className="shadow-medium">
-            <CardHeader>
-              <CardTitle>Personal Information</CardTitle>
+          <Card className="border-0 shadow-2xl bg-card/90 backdrop-blur-2xl hologram-border hologram-scanlines hologram-glow">
+            <CardHeader className="border-b border-cyan-400/20">
+              <CardTitle className="hologram-text">Personal Information</CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="pt-6">
               <form onSubmit={handleUpdateProfile} className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="fullName">Full Name</Label>
@@ -116,6 +116,7 @@ const Profile = () => {
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
                     required
+                    className="border-cyan-400/20 focus-visible:ring-cyan-400"
                   />
                 </div>
 
@@ -126,6 +127,7 @@ const Profile = () => {
                     type="tel"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
+                    className="border-cyan-400/20 focus-visible:ring-cyan-400"
                   />
                 </div>
 
@@ -135,6 +137,7 @@ const Profile = () => {
                     id="address"
                     value={address}
                     onChange={(e) => setAddress(e.target.value)}
+                    className="border-cyan-400/20 focus-visible:ring-cyan-400"
                   />
                 </div>
 
@@ -144,12 +147,13 @@ const Profile = () => {
                     id="organizationName"
                     value={organizationName}
                     onChange={(e) => setOrganizationName(e.target.value)}
+                    className="border-cyan-400/20 focus-visible:ring-cyan-400"
                   />
                 </div>
 
                 <Button
                   type="submit"
-                  className="w-full bg-gradient-to-r from-primary to-accent"
+                  className="w-full bg-gradient-to-r from-cyan-500 to-teal-500 hover:from-cyan-600 hover:to-teal-600 shadow-[0_0_25px_-5px_hsl(180_100%_50%_/0.4)]"
                   disabled={loading}
                 >
                   {loading ? "Saving..." : "Save Changes"}

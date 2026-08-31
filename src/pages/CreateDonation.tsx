@@ -14,6 +14,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import HolographicFoodPreview from "@/components/HolographicFoodPreview";
+import HolographicLoader from "@/components/HolographicLoader";
 import { 
   Upload, 
   ArrowLeft, 
@@ -25,7 +27,7 @@ import {
   Snowflake, 
   Coffee,
   Wheat,
-  Candy,
+  Cookie,
   Wine,
   Droplet,
   Soup,
@@ -33,7 +35,6 @@ import {
   Leaf,
   Flame,
   Pizza,
-  Cookie,
   IceCream,
   Cherry,
   Carrot,
@@ -133,22 +134,28 @@ export default function CreateDonation() {
   };
 
   return (
-    <div className="min-h-screen bg-background py-8">
+    <div className="min-h-screen bg-[image:var(--gradient-page)] py-8">
       <div className="container max-w-2xl mx-auto px-4">
         <Button
           variant="ghost"
           onClick={() => navigate("/dashboard")}
-          className="mb-6"
+          className="mb-6 hover-lift"
         >
           <ArrowLeft className="mr-2 h-4 w-4" />
           Back to Dashboard
         </Button>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Post Food Donation</CardTitle>
+        <Card className="border-0 shadow-2xl bg-card/90 backdrop-blur-2xl hologram-border hologram-scanlines hologram-glow">
+          <CardHeader className="border-b border-cyan-400/20">
+            <CardTitle className="text-2xl font-bold hologram-text flex items-center gap-2">
+              <span className="relative flex h-3 w-3 mr-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-3 w-3 bg-cyan-500"></span>
+              </span>
+              Post Food Donation
+            </CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="pt-6">
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
                 <Label htmlFor="title">Title *</Label>
@@ -432,35 +439,32 @@ export default function CreateDonation() {
                 <Label htmlFor="image">Food Image</Label>
                 <div className="mt-2 space-y-4">
                   {imagePreview && (
-                    <div className="relative w-full h-48 rounded-lg overflow-hidden border-2 border-border">
-                      <img
-                        src={imagePreview}
-                        alt="Preview"
-                        className="w-full h-full object-cover"
+                    <div className="flex justify-center py-4">
+                      <HolographicFoodPreview
+                        imageUrl={imagePreview}
+                        foodType={formData.food_type}
+                        size="md"
                       />
-                      <Button
-                        type="button"
-                        variant="destructive"
-                        size="sm"
-                        className="absolute top-2 right-2"
-                        onClick={() => {
-                          setImageFile(null);
-                          setImagePreview(null);
-                        }}
-                      >
-                        Remove
-                      </Button>
+                    </div>
+                  )}
+                  
+                  {!imagePreview && formData.food_type && (
+                    <div className="flex justify-center py-4">
+                      <HolographicFoodPreview
+                        foodType={formData.food_type}
+                        size="md"
+                      />
                     </div>
                   )}
                   
                   <label
                     htmlFor="image"
-                    className="flex items-center justify-center w-full h-32 border-2 border-dashed border-border rounded-lg cursor-pointer hover:bg-accent/50 transition-colors"
+                    className="flex items-center justify-center w-full h-32 border-2 border-dashed border-cyan-400/30 rounded-lg cursor-pointer hover:bg-cyan-500/10 transition-colors hologram-border"
                   >
                     <div className="flex flex-col items-center">
-                      <Upload className="h-8 w-8 text-muted-foreground mb-2" />
+                      <Upload className="h-8 w-8 text-cyan-400 mb-2" />
                       <p className="text-sm text-muted-foreground">
-                        {imageFile ? "Change image" : "Click to upload image"}
+                        {imageFile ? "Change image" : "Click to upload holographic image"}
                       </p>
                       {imageFile && (
                         <p className="text-xs text-muted-foreground mt-1">
@@ -479,7 +483,11 @@ export default function CreateDonation() {
                 </div>
               </div>
 
-              <Button type="submit" className="w-full" disabled={loading}>
+              <Button 
+                type="submit" 
+                className="w-full bg-gradient-to-r from-cyan-500 to-teal-500 hover:from-cyan-600 hover:to-teal-600 shadow-[0_0_25px_-5px_hsl(180_100%_50%_/0.4)]" 
+                disabled={loading}
+              >
                 {loading ? "Posting..." : "Post Donation"}
               </Button>
             </form>

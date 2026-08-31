@@ -378,19 +378,19 @@ export default function Matches() {
         ) : (
           <div className="space-y-4">
             {matches.map((match) => (
-              <Card key={match.id} className="hover:shadow-md transition-shadow">
+              <Card key={match.id} className="hover:shadow-md transition-shadow border-0 shadow-2xl bg-card/90 backdrop-blur-2xl hologram-border hologram-scanlines overflow-hidden">
                 <CardHeader>
                   <div className="flex items-start justify-between gap-4">
-                    {match.donation.image_url && (
-                      <img
-                        src={match.donation.image_url}
-                        alt={match.donation.title}
-                        className="w-24 h-24 rounded-lg object-cover"
+                    <div className="flex-shrink-0">
+                      <HolographicFoodPreview
+                        foodType={match.donation.food_type}
+                        imageUrl={match.donation.image_url}
+                        size="sm"
                       />
-                    )}
+                    </div>
                     <div className="flex-1">
                       <CardTitle className="flex items-center gap-2">
-                        <Package className="h-5 w-5 text-primary" />
+                        <Package className="h-5 w-5 text-cyan-400" />
                         {match.donation.title}
                       </CardTitle>
                       <div className="flex items-center gap-2 mt-2">

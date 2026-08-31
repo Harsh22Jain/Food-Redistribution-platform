@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import Navbar from "@/components/Navbar";
+import HolographicFoodPreview from "@/components/HolographicFoodPreview";
+import HolographicLoader from "@/components/HolographicLoader";
 import { Calendar, MapPin, Package, Clock, User, Star, ArrowLeft, Navigation, Radio } from "lucide-react";
 import { RatingDialog } from "@/components/RatingDialog";
 import LiveTrackingMap from "@/components/LiveTrackingMap";
@@ -348,7 +350,7 @@ export default function Matches() {
   if (loading) {
     return (
       <div className="min-h-screen bg-[image:var(--gradient-page)] flex items-center justify-center">
-        <p className="text-muted-foreground">Loading matches...</p>
+        <HolographicLoader size="lg" text="Synchronizing donation matches..." />
       </div>
     );
   }
@@ -360,15 +362,15 @@ export default function Matches() {
         <Button
           variant="ghost"
           onClick={() => navigate(-1)}
-          className="mb-6"
+          className="mb-6 hover-lift"
         >
           <ArrowLeft className="mr-2 h-4 w-4" />
           Back
         </Button>
-        <h1 className="text-3xl font-bold mb-8">Food Donation Matches</h1>
+        <h1 className="text-3xl font-bold mb-8 hologram-text">Food Donation Matches</h1>
 
         {matches.length === 0 ? (
-          <Card>
+          <Card className="border-0 shadow-2xl bg-card/90 backdrop-blur-2xl hologram-border hologram-scanlines">
             <CardContent className="py-12 text-center">
               <p className="text-muted-foreground">No matches found</p>
             </CardContent>
@@ -376,19 +378,19 @@ export default function Matches() {
         ) : (
           <div className="space-y-4">
             {matches.map((match) => (
-              <Card key={match.id} className="hover:shadow-md transition-shadow">
+              <Card key={match.id} className="hover:shadow-md transition-shadow border-0 shadow-2xl bg-card/90 backdrop-blur-2xl hologram-border hologram-scanlines overflow-hidden">
                 <CardHeader>
                   <div className="flex items-start justify-between gap-4">
-                    {match.donation.image_url && (
-                      <img
-                        src={match.donation.image_url}
-                        alt={match.donation.title}
-                        className="w-24 h-24 rounded-lg object-cover"
+                    <div className="flex-shrink-0">
+                      <HolographicFoodPreview
+                        foodType={match.donation.food_type}
+                        imageUrl={match.donation.image_url}
+                        size="sm"
                       />
-                    )}
+                    </div>
                     <div className="flex-1">
                       <CardTitle className="flex items-center gap-2">
-                        <Package className="h-5 w-5 text-primary" />
+                        <Package className="h-5 w-5 text-cyan-400" />
                         {match.donation.title}
                       </CardTitle>
                       <div className="flex items-center gap-2 mt-2">

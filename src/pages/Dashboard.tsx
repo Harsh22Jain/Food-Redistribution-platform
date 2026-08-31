@@ -10,6 +10,7 @@ import GlassCard from "@/components/GlassCard";
 import AnimatedCounter from "@/components/AnimatedCounter";
 import ImpactChart from "@/components/ImpactChart";
 import ProgressRing from "@/components/ProgressRing";
+import HolographicLoader from "@/components/HolographicLoader";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Package, Users, Truck, TrendingUp, Building2, History, Sparkles, ArrowRight } from "lucide-react";
@@ -171,11 +172,7 @@ const Dashboard = () => {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[image:var(--gradient-page)]">
-        <motion.div
-          animate={{ rotate: 360 }}
-          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-          className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full"
-        />
+        <HolographicLoader size="lg" text="Initializing NourishNet dashboard..." />
       </div>
     );
   }
@@ -319,14 +316,14 @@ const Dashboard = () => {
         {/* Impact Section */}
         <motion.div variants={itemVariants} className="grid gap-6 lg:grid-cols-3 mb-8">
           {/* Progress Ring Card */}
-          <GlassCard gradient="primary" className="p-6 flex flex-col items-center justify-center">
-            <h3 className="font-semibold mb-4">Completion Rate</h3>
+          <GlassCard hologram gradient="primary" className="p-6 flex flex-col items-center justify-center">
+            <h3 className="font-semibold mb-4 hologram-text">Completion Rate</h3>
             <ProgressRing progress={impactPercentage} size={140} color="primary">
               <div className="text-center">
                 <AnimatedCounter 
                   value={Math.round(impactPercentage)} 
                   suffix="%" 
-                  className="text-2xl font-bold"
+                  className="text-2xl font-bold hologram-text"
                 />
                 <p className="text-xs text-muted-foreground">Complete</p>
               </div>
@@ -334,8 +331,8 @@ const Dashboard = () => {
           </GlassCard>
 
           {/* Charts Card */}
-          <GlassCard className="p-6 lg:col-span-2">
-            <h3 className="font-semibold mb-4">Activity Overview</h3>
+          <GlassCard hologram className="p-6 lg:col-span-2">
+            <h3 className="font-semibold mb-4 hologram-text">Activity Overview</h3>
             <ImpactChart 
               stats={{
                 available: stats.activeDonations,
@@ -349,13 +346,13 @@ const Dashboard = () => {
 
         {/* Quick Actions */}
         <motion.div variants={itemVariants}>
-          <GlassCard className="p-6">
-            <h3 className="font-semibold text-lg mb-4">Quick Actions</h3>
+          <GlassCard hologram className="p-6">
+            <h3 className="font-semibold text-lg mb-4 hologram-text">Quick Actions</h3>
             <div className="grid gap-4 md:grid-cols-4">
               {isDonor && (
                 <Button 
                   onClick={() => navigate("/create-donation")} 
-                  className="w-full h-auto py-4 flex flex-col gap-2 hover-lift"
+                  className="w-full h-auto py-4 flex flex-col gap-2 hover-lift bg-gradient-to-br from-cyan-500 to-teal-500 hover:from-cyan-600 hover:to-teal-600 shadow-[0_0_20px_-5px_hsl(180_100%_50%_/0.3)]"
                 >
                   <Package className="h-5 w-5" />
                   <span>Post Donation</span>

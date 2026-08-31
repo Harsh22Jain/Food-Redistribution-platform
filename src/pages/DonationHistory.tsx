@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { User } from "@supabase/supabase-js";
 import Navbar from "@/components/Navbar";
+import HolographicFoodPreview from "@/components/HolographicFoodPreview";
+import HolographicLoader from "@/components/HolographicLoader";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -149,8 +151,8 @@ const DonationHistory = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p>Loading...</p>
+      <div className="min-h-screen flex items-center justify-center bg-[image:var(--gradient-page)]">
+        <HolographicLoader size="lg" text="Loading donation history..." />
       </div>
     );
   }

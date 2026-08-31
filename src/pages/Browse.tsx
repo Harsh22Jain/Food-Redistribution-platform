@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import Navbar from "@/components/Navbar";
+import HolographicFoodPreview from "@/components/HolographicFoodPreview";
+import HolographicLoader from "@/components/HolographicLoader";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -148,8 +150,8 @@ const Browse = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p>Loading...</p>
+      <div className="min-h-screen flex items-center justify-center bg-[image:var(--gradient-page)]">
+        <HolographicLoader size="lg" text="Scanning available food donations..." />
       </div>
     );
   }
@@ -159,7 +161,7 @@ const Browse = () => {
       <Navbar />
       <div className="container mx-auto px-4 pt-24 pb-12">
         <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-2">Browse Available Food</h1>
+          <h1 className="text-4xl font-bold mb-2 hologram-text">Browse Available Food</h1>
           <p className="text-muted-foreground mb-6">Find fresh donations from your community</p>
           
           <div className="flex flex-col md:flex-row gap-4">
@@ -203,7 +205,7 @@ const Browse = () => {
         </div>
 
         {filteredDonations.length === 0 ? (
-          <Card>
+          <Card className="border-0 shadow-2xl bg-card/90 backdrop-blur-2xl hologram-border hologram-scanlines">
             <CardContent className="py-12 text-center">
               <p className="text-muted-foreground">No food donations available at the moment.</p>
             </CardContent>
@@ -211,21 +213,17 @@ const Browse = () => {
         ) : (
           <div className="space-y-4">
             {filteredDonations.map((donation) => (
-              <Card key={donation.id} className="hover:shadow-medium transition-shadow">
+              <Card key={donation.id} className="hover:shadow-medium transition-shadow border-0 shadow-2xl bg-card/90 backdrop-blur-2xl hologram-border hologram-scanlines overflow-hidden">
                 <CardContent className="p-4">
                   <div className="flex gap-4">
-                    {/* Thumbnail Image */}
-                    {donation.image_url ? (
-                      <img
-                        src={donation.image_url}
-                        alt={donation.title}
-                        className="w-24 h-24 object-cover rounded-lg flex-shrink-0"
+                    {/* Holographic Thumbnail Preview */}
+                    <div className="flex-shrink-0">
+                      <HolographicFoodPreview
+                        foodType={donation.food_type}
+                        imageUrl={donation.image_url}
+                        size="sm"
                       />
-                    ) : (
-                      <div className="w-24 h-24 bg-muted rounded-lg flex items-center justify-center flex-shrink-0">
-                        <Package className="w-8 h-8 text-muted-foreground" />
-                      </div>
-                    )}
+                    </div>
 
                     {/* Content */}
                     <div className="flex-1 min-w-0">
@@ -244,11 +242,11 @@ const Browse = () => {
 
                       <div className="grid grid-cols-2 gap-2 text-sm mb-3">
                         <div className="flex items-center gap-2">
-                          <MapPin className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+                          <MapPin className="w-4 h-4 text-cyan-400 flex-shrink-0" />
                           <span className="truncate">{donation.pickup_location}</span>
                         </div>
                         <div className="flex items-center gap-2">
-                          <Calendar className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+                          <Calendar className="w-4 h-4 text-cyan-400 flex-shrink-0" />
                           <span>Pickup: {new Date(donation.pickup_time_start).toLocaleDateString()}</span>
                         </div>
                         <div>
@@ -263,7 +261,7 @@ const Browse = () => {
 
                       <Button
                         onClick={() => handleClaim(donation.id)}
-                        className="w-full sm:w-auto bg-gradient-to-r from-primary to-accent"
+                        className="w-full sm:w-auto bg-gradient-to-r from-cyan-500 to-teal-500 hover:from-cyan-600 hover:to-teal-600 shadow-[0_0_20px_-5px_hsl(180_100%_50%_/0.3)]"
                       >
                         Claim This Food
                       </Button>

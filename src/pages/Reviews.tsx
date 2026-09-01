@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
+import HolographicLoader from '@/components/HolographicLoader';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -73,10 +74,10 @@ const Reviews = () => {
         {[1, 2, 3, 4, 5].map((star) => (
           <Star
             key={star}
-            className={`h-5 w-5 ${
+            className={`h-5 w-5 transition-all ${
               star <= rating
-                ? 'fill-yellow-400 text-yellow-400'
-                : 'text-gray-300'
+                ? 'fill-yellow-400 text-yellow-400 drop-shadow-[0_0_6px_rgba(250,204,21,0.6)]'
+                : 'text-muted-foreground/40'
             }`}
           />
         ))}
@@ -86,11 +87,8 @@ const Reviews = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[image:var(--gradient-page)]">
-        <Navbar />
-        <div className="container mx-auto px-4 py-8 pt-24">
-          <p className="text-center text-muted-foreground">Loading reviews...</p>
-        </div>
+      <div className="min-h-screen flex items-center justify-center bg-[image:var(--gradient-page)]">
+        <HolographicLoader size="lg" text="Loading community reviews..." />
       </div>
     );
   }
@@ -102,12 +100,12 @@ const Reviews = () => {
         <Button
           variant="ghost"
           onClick={() => navigate(-1)}
-          className="mb-6"
+          className="mb-6 hover-lift"
         >
           <ArrowLeft className="mr-2 h-4 w-4" />
           Back
         </Button>
-        <h1 className="text-3xl font-bold mb-8 text-foreground">Community Reviews</h1>
+        <h1 className="text-3xl font-bold mb-8 hologram-text">Community Reviews</h1>
 
         {ratings.length === 0 ? (
           <Card>

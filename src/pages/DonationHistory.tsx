@@ -167,12 +167,12 @@ const DonationHistory = () => {
             variant="ghost"
             size="icon"
             onClick={() => navigate(-1)}
-            className="rounded-full"
+            className="rounded-full hover-lift"
           >
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <div>
-            <h1 className="text-4xl font-bold">Donation History</h1>
+            <h1 className="text-4xl font-bold hologram-text">Donation History</h1>
             <p className="text-muted-foreground">
               View and track all your past donations
             </p>

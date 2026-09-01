@@ -9,7 +9,7 @@ import {
 interface HolographicFoodPreviewProps {
   foodType?: string;
   imageUrl?: string | null;
-  size?: "sm" | "md" | "lg";
+  size?: "xs" | "sm" | "md" | "lg";
   className?: string;
 }
 
@@ -35,6 +35,7 @@ const foodTypeIcons: Record<string, { icon: React.ElementType; color: string; la
 };
 
 const sizes = {
+  xs: { container: "w-10 h-10", ring1: "w-9 h-9", ring2: "w-6 h-6", icon: "h-4 w-4" },
   sm: { container: "w-24 h-24", ring1: "w-20 h-20", ring2: "w-14 h-14", icon: "h-8 w-8" },
   md: { container: "w-40 h-40", ring1: "w-32 h-32", ring2: "w-24 h-24", icon: "h-14 w-14" },
   lg: { container: "w-56 h-56", ring1: "w-44 h-44", ring2: "w-32 h-32", icon: "h-20 w-20" },

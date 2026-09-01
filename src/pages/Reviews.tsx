@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
+import HolographicLoader from '@/components/HolographicLoader';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -73,10 +74,10 @@ const Reviews = () => {
         {[1, 2, 3, 4, 5].map((star) => (
           <Star
             key={star}
-            className={`h-5 w-5 ${
+            className={`h-5 w-5 transition-all ${
               star <= rating
-                ? 'fill-yellow-400 text-yellow-400'
-                : 'text-gray-300'
+                ? 'fill-yellow-400 text-yellow-400 drop-shadow-[0_0_6px_rgba(250,204,21,0.6)]'
+                : 'text-muted-foreground/40'
             }`}
           />
         ))}
@@ -86,11 +87,8 @@ const Reviews = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[image:var(--gradient-page)]">
-        <Navbar />
-        <div className="container mx-auto px-4 py-8 pt-24">
-          <p className="text-center text-muted-foreground">Loading reviews...</p>
-        </div>
+      <div className="min-h-screen flex items-center justify-center bg-[image:var(--gradient-page)]">
+        <HolographicLoader size="lg" text="Loading community reviews..." />
       </div>
     );
   }
@@ -102,27 +100,28 @@ const Reviews = () => {
         <Button
           variant="ghost"
           onClick={() => navigate(-1)}
-          className="mb-6"
+          className="mb-6 hover-lift"
         >
           <ArrowLeft className="mr-2 h-4 w-4" />
           Back
         </Button>
-        <h1 className="text-3xl font-bold mb-8 text-foreground">Community Reviews</h1>
+        <h1 className="text-3xl font-bold mb-8 hologram-text">Community Reviews</h1>
 
         {ratings.length === 0 ? (
-          <Card>
+          <Card className="border-0 shadow-2xl bg-card/90 backdrop-blur-2xl hologram-border hologram-scanlines hologram-glow">
             <CardContent className="py-12 text-center">
+              <Star className="h-12 w-12 mx-auto text-yellow-400 mb-4 drop-shadow-[0_0_10px_rgba(250,204,21,0.5)]" />
               <p className="text-muted-foreground">No reviews yet. Be the first to leave a review!</p>
             </CardContent>
           </Card>
         ) : (
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {ratings.map((rating) => (
-              <Card key={rating.id} className="hover:shadow-lg transition-shadow">
+              <Card key={rating.id} className="border-0 shadow-2xl bg-card/90 backdrop-blur-2xl hologram-border hologram-scanlines hologram-glow hover-lift overflow-hidden">
                 <CardHeader>
                   <div className="flex items-center gap-3 mb-3">
-                    <Avatar>
-                      <AvatarFallback>
+                    <Avatar className="border border-cyan-400/30 shadow-[0_0_10px_-2px_hsl(180_100%_50%_/0.3)]">
+                      <AvatarFallback className="bg-cyan-500/10 text-cyan-400 font-bold">
                         {rating.userName[0] || 'U'}
                       </AvatarFallback>
                     </Avatar>
@@ -138,7 +137,7 @@ const Reviews = () => {
                   {renderStars(rating.rating)}
                 </CardHeader>
                 <CardContent>
-                  <CardTitle className="text-lg mb-2 text-foreground">
+                  <CardTitle className="text-lg mb-2 text-cyan-400">
                     {rating.donationTitle}
                   </CardTitle>
                   {rating.feedback && (

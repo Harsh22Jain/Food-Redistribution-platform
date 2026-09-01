@@ -167,12 +167,12 @@ const DonationHistory = () => {
             variant="ghost"
             size="icon"
             onClick={() => navigate(-1)}
-            className="rounded-full"
+            className="rounded-full hover-lift"
           >
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <div>
-            <h1 className="text-4xl font-bold">Donation History</h1>
+            <h1 className="text-4xl font-bold hologram-text">Donation History</h1>
             <p className="text-muted-foreground">
               View and track all your past donations
             </p>
@@ -181,43 +181,43 @@ const DonationHistory = () => {
 
         {/* Stats Overview */}
         <div className="grid gap-4 md:grid-cols-5 mb-8">
-          <Card className="bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20">
+          <Card className="border-0 shadow-xl bg-card/80 backdrop-blur-xl hologram-border hologram-scanlines hologram-glow">
             <CardContent className="pt-6">
-              <div className="text-3xl font-bold text-primary">{stats.total}</div>
+              <div className="text-3xl font-bold text-cyan-400">{stats.total}</div>
               <p className="text-sm text-muted-foreground">Total Donations</p>
             </CardContent>
           </Card>
-          <Card className="bg-gradient-to-br from-emerald-500/10 to-emerald-500/5 border-emerald-500/20">
+          <Card className="border-0 shadow-xl bg-card/80 backdrop-blur-xl hologram-border hologram-scanlines hologram-glow">
             <CardContent className="pt-6">
-              <div className="text-3xl font-bold text-emerald-600 dark:text-emerald-400">{stats.available}</div>
+              <div className="text-3xl font-bold text-emerald-400">{stats.available}</div>
               <p className="text-sm text-muted-foreground">Available</p>
             </CardContent>
           </Card>
-          <Card className="bg-gradient-to-br from-blue-500/10 to-blue-500/5 border-blue-500/20">
+          <Card className="border-0 shadow-xl bg-card/80 backdrop-blur-xl hologram-border hologram-scanlines hologram-glow">
             <CardContent className="pt-6">
-              <div className="text-3xl font-bold text-blue-600 dark:text-blue-400">{stats.matched}</div>
+              <div className="text-3xl font-bold text-blue-400">{stats.matched}</div>
               <p className="text-sm text-muted-foreground">Matched</p>
             </CardContent>
           </Card>
-          <Card className="bg-gradient-to-br from-purple-500/10 to-purple-500/5 border-purple-500/20">
+          <Card className="border-0 shadow-xl bg-card/80 backdrop-blur-xl hologram-border hologram-scanlines hologram-glow">
             <CardContent className="pt-6">
-              <div className="text-3xl font-bold text-purple-600 dark:text-purple-400">{stats.completed}</div>
+              <div className="text-3xl font-bold text-purple-400">{stats.completed}</div>
               <p className="text-sm text-muted-foreground">Completed</p>
             </CardContent>
           </Card>
-          <Card className="bg-gradient-to-br from-red-500/10 to-red-500/5 border-red-500/20">
+          <Card className="border-0 shadow-xl bg-card/80 backdrop-blur-xl hologram-border hologram-scanlines hologram-glow">
             <CardContent className="pt-6">
-              <div className="text-3xl font-bold text-red-600 dark:text-red-400">{stats.expired}</div>
+              <div className="text-3xl font-bold text-red-400">{stats.expired}</div>
               <p className="text-sm text-muted-foreground">Expired</p>
             </CardContent>
           </Card>
         </div>
 
         {/* Filters */}
-        <Card className="mb-6">
+        <Card className="mb-6 border-0 shadow-2xl bg-card/90 backdrop-blur-2xl hologram-border hologram-scanlines">
           <CardContent className="pt-6">
             <div className="flex flex-col md:flex-row gap-4 items-center">
-              <div className="flex items-center gap-2 text-muted-foreground">
+              <div className="flex items-center gap-2 text-cyan-400">
                 <Filter className="h-4 w-4" />
                 <span className="text-sm font-medium">Filters:</span>
               </div>
@@ -225,10 +225,10 @@ const DonationHistory = () => {
                 placeholder="Search by title or location..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="md:w-64"
+                className="md:w-64 border-cyan-400/20 focus-visible:ring-cyan-400"
               />
               <Select value={filterStatus} onValueChange={setFilterStatus}>
-                <SelectTrigger className="md:w-40">
+                <SelectTrigger className="md:w-40 border-cyan-400/20 focus:ring-cyan-400">
                   <SelectValue placeholder="Status" />
                 </SelectTrigger>
                 <SelectContent>
@@ -241,7 +241,7 @@ const DonationHistory = () => {
                 </SelectContent>
               </Select>
               <Select value={filterFoodType} onValueChange={setFilterFoodType}>
-                <SelectTrigger className="md:w-48">
+                <SelectTrigger className="md:w-48 border-cyan-400/20 focus:ring-cyan-400">
                   <SelectValue placeholder="Food Type" />
                 </SelectTrigger>
                 <SelectContent>
@@ -256,6 +256,7 @@ const DonationHistory = () => {
                   variant={viewMode === "cards" ? "default" : "outline"}
                   size="sm"
                   onClick={() => setViewMode("cards")}
+                  className={viewMode === "cards" ? "bg-gradient-to-r from-cyan-500 to-teal-500 shadow-[0_0_20px_-5px_hsl(180_100%_50%_/0.4)]" : ""}
                 >
                   Cards
                 </Button>
@@ -263,6 +264,7 @@ const DonationHistory = () => {
                   variant={viewMode === "table" ? "default" : "outline"}
                   size="sm"
                   onClick={() => setViewMode("table")}
+                  className={viewMode === "table" ? "bg-gradient-to-r from-cyan-500 to-teal-500 shadow-[0_0_20px_-5px_hsl(180_100%_50%_/0.4)]" : ""}
                 >
                   Table
                 </Button>
@@ -273,9 +275,9 @@ const DonationHistory = () => {
 
         {/* Donations List */}
         {filteredDonations.length === 0 ? (
-          <Card>
+          <Card className="border-0 shadow-2xl bg-card/90 backdrop-blur-2xl hologram-border hologram-scanlines hologram-glow">
             <CardContent className="py-12 text-center">
-              <Package className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+              <Package className="h-12 w-12 mx-auto text-cyan-400 mb-4" />
               <h3 className="text-lg font-semibold mb-2">No donations found</h3>
               <p className="text-muted-foreground mb-4">
                 {donations.length === 0
@@ -292,16 +294,15 @@ const DonationHistory = () => {
         ) : viewMode === "cards" ? (
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {filteredDonations.map((donation) => (
-              <Card key={donation.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-                {donation.image_url && (
-                  <div className="h-40 overflow-hidden">
-                    <img
-                      src={donation.image_url}
-                      alt={donation.title}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                )}
+              <Card key={donation.id} className="overflow-hidden border-0 shadow-2xl bg-card/90 backdrop-blur-2xl hologram-border hologram-scanlines hologram-glow hover-lift">
+                <div className="h-40 overflow-hidden relative border-b border-cyan-400/20">
+                  <HolographicFoodPreview
+                    foodType={donation.food_type}
+                    imageUrl={donation.image_url}
+                    size="lg"
+                    className="w-full h-full"
+                  />
+                </div>
                 <CardHeader className="pb-2">
                   <div className="flex items-start justify-between gap-2">
                     <CardTitle className="text-lg line-clamp-1">{donation.title}</CardTitle>
@@ -315,27 +316,27 @@ const DonationHistory = () => {
                 </CardHeader>
                 <CardContent className="space-y-3">
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <Package className="h-4 w-4" />
+                    <Package className="h-4 w-4 text-cyan-400" />
                     <span>{donation.food_type}</span>
                     <span className="mx-1">•</span>
                     <span>{donation.quantity} {donation.unit}</span>
                   </div>
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <MapPin className="h-4 w-4" />
+                    <MapPin className="h-4 w-4 text-cyan-400" />
                     <span className="line-clamp-1">{donation.pickup_location}</span>
                   </div>
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <Calendar className="h-4 w-4" />
+                    <Calendar className="h-4 w-4 text-cyan-400" />
                     <span>Created: {format(new Date(donation.created_at), "MMM d, yyyy")}</span>
                   </div>
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <Clock className="h-4 w-4" />
+                    <Clock className="h-4 w-4 text-cyan-400" />
                     <span>Expires: {format(new Date(donation.expiration_date), "MMM d, yyyy")}</span>
                   </div>
                   {donation.match && (
-                    <div className="pt-3 border-t">
+                    <div className="pt-3 border-t border-cyan-400/20">
                       <div className="flex items-center gap-2 text-sm">
-                        <UserIcon className="h-4 w-4 text-primary" />
+                        <UserIcon className="h-4 w-4 text-cyan-400" />
                         <span className="font-medium">Match Status:</span>
                         <Badge variant="outline" className={getStatusColor(donation.match.status)}>
                           {donation.match.status}
@@ -343,7 +344,7 @@ const DonationHistory = () => {
                       </div>
                       {donation.match.delivery_time && (
                         <div className="flex items-center gap-2 text-sm text-muted-foreground mt-2">
-                          <Clock className="h-4 w-4" />
+                          <Clock className="h-4 w-4 text-cyan-400" />
                           <span>Delivered: {format(new Date(donation.match.delivery_time), "MMM d, yyyy 'at' h:mm a")}</span>
                         </div>
                       )}
@@ -354,10 +355,10 @@ const DonationHistory = () => {
             ))}
           </div>
         ) : (
-          <Card>
+          <Card className="border-0 shadow-2xl bg-card/90 backdrop-blur-2xl hologram-border hologram-scanlines hologram-glow overflow-hidden">
             <Table>
               <TableHeader>
-                <TableRow>
+                <TableRow className="border-cyan-400/20 hover:bg-cyan-400/5">
                   <TableHead>Title</TableHead>
                   <TableHead>Food Type</TableHead>
                   <TableHead>Quantity</TableHead>
@@ -369,8 +370,15 @@ const DonationHistory = () => {
               </TableHeader>
               <TableBody>
                 {filteredDonations.map((donation) => (
-                  <TableRow key={donation.id}>
-                    <TableCell className="font-medium">{donation.title}</TableCell>
+                  <TableRow key={donation.id} className="border-cyan-400/10 hover:bg-cyan-400/5">
+                    <TableCell className="font-medium flex items-center gap-2">
+                      <HolographicFoodPreview
+                        foodType={donation.food_type}
+                        imageUrl={donation.image_url}
+                        size="xs"
+                      />
+                      {donation.title}
+                    </TableCell>
                     <TableCell>{donation.food_type}</TableCell>
                     <TableCell>{donation.quantity} {donation.unit}</TableCell>
                     <TableCell className="max-w-[200px] truncate">{donation.pickup_location}</TableCell>

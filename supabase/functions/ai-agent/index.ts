@@ -112,7 +112,7 @@ async function executeTool(
   toolName: string,
   args: Record<string, unknown>,
   userId: string,
-  supabaseAdmin: ReturnType<typeof createClient>
+  supabaseAdmin: any
 ): Promise<string> {
   switch (toolName) {
     case "search_available_donations": {
@@ -340,7 +340,7 @@ serve(async (req) => {
 
     // Extract user from auth header
     const authHeader = req.headers.get("authorization") || "";
-    const supabaseAdmin = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+    const supabaseAdmin: any = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
     // Try to get user from the token
     const token = authHeader.replace("Bearer ", "");

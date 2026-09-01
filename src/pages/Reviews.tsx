@@ -108,19 +108,20 @@ const Reviews = () => {
         <h1 className="text-3xl font-bold mb-8 hologram-text">Community Reviews</h1>
 
         {ratings.length === 0 ? (
-          <Card>
+          <Card className="border-0 shadow-2xl bg-card/90 backdrop-blur-2xl hologram-border hologram-scanlines hologram-glow">
             <CardContent className="py-12 text-center">
+              <Star className="h-12 w-12 mx-auto text-yellow-400 mb-4 drop-shadow-[0_0_10px_rgba(250,204,21,0.5)]" />
               <p className="text-muted-foreground">No reviews yet. Be the first to leave a review!</p>
             </CardContent>
           </Card>
         ) : (
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {ratings.map((rating) => (
-              <Card key={rating.id} className="hover:shadow-lg transition-shadow">
+              <Card key={rating.id} className="border-0 shadow-2xl bg-card/90 backdrop-blur-2xl hologram-border hologram-scanlines hologram-glow hover-lift overflow-hidden">
                 <CardHeader>
                   <div className="flex items-center gap-3 mb-3">
-                    <Avatar>
-                      <AvatarFallback>
+                    <Avatar className="border border-cyan-400/30 shadow-[0_0_10px_-2px_hsl(180_100%_50%_/0.3)]">
+                      <AvatarFallback className="bg-cyan-500/10 text-cyan-400 font-bold">
                         {rating.userName[0] || 'U'}
                       </AvatarFallback>
                     </Avatar>
@@ -136,7 +137,7 @@ const Reviews = () => {
                   {renderStars(rating.rating)}
                 </CardHeader>
                 <CardContent>
-                  <CardTitle className="text-lg mb-2 text-foreground">
+                  <CardTitle className="text-lg mb-2 text-cyan-400">
                     {rating.donationTitle}
                   </CardTitle>
                   {rating.feedback && (
